@@ -1,6 +1,8 @@
+
 import React from 'react';
 
-const Navbar = () => {
+const AboutPage = async () => {
+ 
     return (
         <div>
             
@@ -8,4 +10,4 @@ const Navbar = () => {
     );
 };
 
-export default Navbar;
+export default AboutPage;

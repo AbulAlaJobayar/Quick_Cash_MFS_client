@@ -4,8 +4,7 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 export const baseApi = createApi({
   reducerPath: "api",
   baseQuery: axiosBaseQuery({
-    baseUrl:
-      "https://quickcash-server.vercel.app/api/v1",
+    baseUrl:`${process.env.BACKEND_URL}`,
   }),
   endpoints: () => ({}),
   //   todo :: set tag type
