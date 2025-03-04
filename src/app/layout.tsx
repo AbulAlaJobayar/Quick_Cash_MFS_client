@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/lib/Providers";
 import { Roboto } from "next/font/google";
+import { Toaster } from "sonner";
+
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -29,9 +31,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="container mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8">
+          <div className="container  max-w-[1920px] mx-4 sm:mx-6 lg:mx-8">
             {children}
           </div>
+          <Toaster richColors/>
         </ThemeProvider>
       </body>
     </html>

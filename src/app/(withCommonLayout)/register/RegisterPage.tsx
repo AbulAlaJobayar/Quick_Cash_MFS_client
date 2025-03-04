@@ -1,20 +1,23 @@
 "use client";
-import { z } from "zod";
-import { useState } from "react";
-import { motion } from "framer-motion";
-import QKSFrom from "./shared/Form/QKSForm";
-import QKSInput from "./shared/Form/QKSInput";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CiMobile2, CiLock } from "react-icons/ci";
-import { Button } from "./ui/button";
-import { parsePhoneNumberFromString } from "libphonenumber-js";
+import { z } from "zod";
+import { motion } from "framer-motion";
+import { CiMobile2, CiLock, CiUser } from "react-icons/ci";
+import { BiShow, BiHide } from "react-icons/bi";
 import { Checkbox } from "@/components/ui/checkbox";
-import { BiHide, BiShow } from "react-icons/bi";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import Image from "next/image";
-import loginImage from "@/assets/login.png";
-import { RiLoginCircleFill } from "react-icons/ri";
 
+import Image from "next/image";
+import registerImage from "@/assets/register.png"; // Replace with your image
+import { useState } from "react";
+import QKSFrom from "@/components/shared/Form/QKSForm";
+import QKSInput from "@/components/shared/Form/QKSInput";
+import parsePhoneNumberFromString from "libphonenumber-js";
+import { MdOutlineEmail } from "react-icons/md";
+import { HiOutlineDocument } from "react-icons/hi2";
+
+// Zod schema for registration form validation
 const mobileNumber = z.string().refine(
   (value) => {
     const mobile = parsePhoneNumberFromString(value);
@@ -26,20 +29,25 @@ const mobileNumber = z.string().refine(
   }
 );
 
-const formSchema = z.object({
-  mobile: mobileNumber,
-  pin: z.string().min(5, "pin must be at least 5 characters"),
+const registerSchema = z.object({
+  name: z.string().min(1, { message: "Name is required" }),
+  pin: z.string().min(4, { message: "PIN must be at least 4 digits long" }),
+  mobileNumber: mobileNumber,
+  email: z.string().email({ message: "Invalid email format" }),
+  nid: z
+    .string()
+    .min(10, { message: "NID must be at least 10 characters long" }),
 });
 
-type FormValues = z.infer<typeof formSchema>;
-
-export default function LoginPage() {
+export default function RegisterPage() {
   const [showPin, setShowPin] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
 
-  const handleSubmit = (data: FormValues) => {
-    console.log("Form data submitted:", data);
-    // Add your login logic here
+
+
+  const onSubmit = (data) => {
+    console.log("Registration Data:", data);
+    // Handle registration logic here (e.g., API call)
   };
 
   return (
@@ -48,37 +56,70 @@ export default function LoginPage() {
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="w-full max-w-6xl bg-white dark:bg-black   overflow-hidden flex flex-col md:flex-row"
+        className="w-full max-w-6xl bg-white dark:bg-black overflow-hidden flex flex-col md:flex-row"
       >
-        {/* Form Section */}
-
+        {/* Form Section (1/2 width on desktop, full width on mobile) */}
         <div className="w-full md:w-1/2 p-8">
-          <motion.div className=" bg-gradient-to-r from-pink-900 to-pink-400 rounded-lg shadow-xl p-[2px]">
+          <motion.div className="bg-gradient-to-r from-pink-900 to-pink-400 rounded-lg shadow-xl p-[2px]">
             <div className="bg-white dark:bg-black rounded-md p-8 shadow-xl">
               <div className="mb-6 text-center">
                 <h1 className="text-2xl font-bold text-[#333333] dark:text-white">
-                  Login
+                 Sign Up
                 </h1>
               </div>
-              <QKSFrom
-                resolver={zodResolver(formSchema)}
-                onSubmit={handleSubmit}
-              >
+              <QKSFrom resolver={zodResolver(registerSchema)} onSubmit={onSubmit}>
+                {/* Name Field */}
+                <QKSInput
+                  type="text"
+                  required
+                  label="Name"
+                  name="name"
+                  placeholder="Enter your name"
+                  className="w-full my-4 border-pink-900 drop-shadow-xs shadow-pink-700"
+                  icon={<CiUser />}
+                />
+
+                {/* Mobile Number Field */}
                 <QKSInput
                   type="text"
                   required
                   label="Mobile"
-                  name="mobile"
+                  name="mobileNumber"
                   placeholder="+8801234567891"
-                  className="w-full my-4  border-pink-900 drop-shadow-xs shadow-pink-700"
+                  className="w-full my-4 border-pink-900 drop-shadow-xs shadow-pink-700"
                   icon={<CiMobile2 />}
                 />
+
+                {/* Email Field */}
+                <QKSInput
+                  type="email"
+                  required
+                  label="Email"
+                  name="email"
+                  icon={<MdOutlineEmail />}
+                  placeholder="example@example.com"
+                  className="w-full my-4 border-pink-900 drop-shadow-xs shadow-pink-700"
+                />
+
+                {/* NID Field */}
+                <QKSInput
+                  type="text"
+                  required
+                  label="NID"
+                  name="nid"
+                  icon={<HiOutlineDocument />}
+                  placeholder="Enter your NID number"
+                  className="w-full my-4 border-pink-900 drop-shadow-xs shadow-pink-700"
+                />
+
+                {/* PIN Field */}
                 <div className="relative">
                   <QKSInput
                     type={showPin ? "text" : "password"}
                     required
                     label="PIN"
                     name="pin"
+                    placeholder="Enter your PIN"
                     className="w-full my-4 border-pink-900 drop-shadow-xs shadow-pink-700"
                     icon={<CiLock />}
                   />
@@ -90,6 +131,8 @@ export default function LoginPage() {
                     {showPin ? <BiHide /> : <BiShow />}
                   </button>
                 </div>
+
+                {/* Terms and Conditions Checkbox */}
                 <div className="md:flex justify-between items-center my-4">
                   <div className="flex items-center space-x-2 my-2 md:my-0">
                     <Checkbox
@@ -104,20 +147,9 @@ export default function LoginPage() {
                       Accept terms and conditions
                     </label>
                   </div>
-                  <Link href="#">
-                    <motion.div
-                      whileTap={{ scale: 0.8 }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 300,
-                        damping: 50,
-                      }}
-                      className="text-sm text-blue-800 underline hover:text-blue-900"
-                    >
-                      Forgot Password?
-                    </motion.div>
-                  </Link>
                 </div>
+
+                {/* Submit Button */}
                 <motion.div
                   whileTap={{ scale: 0.9 }}
                   transition={{ type: "spring", stiffness: 300, damping: 50 }}
@@ -125,42 +157,25 @@ export default function LoginPage() {
                   <Button
                     type="submit"
                     disabled={!isChecked}
-                    className="w-full my-4 cursor-pointer  bg-gradient-to-tr from-pink-900 to-pink-600 text-white "
+                    className="w-full my-4 cursor-pointer bg-gradient-to-tr from-pink-900 to-pink-600 text-white"
                   >
-                    Submit
+                    Register
                   </Button>
                 </motion.div>
               </QKSFrom>
-              {/* register */}
 
-              <p className=" text-md text-end  mb-5">
-                Don&apos;t have an account yet ?{" "}
+              {/* Login Link */}
+              <p className="text-md text-end mb-5">
+                Already have an account?{" "}
                 <span className="text-blue-800 underline hover:text-blue-900">
-                  <Link href="/register">Register</Link>
+                  <Link href="/login">Login</Link>
                 </span>
-                .
               </p>
-
-              <motion.div
-                whileTap={{ scale: 0.9 }}
-                transition={{ type: "spring", stiffness: 300, damping: 50 }}
-                className=" w-[250px] mx-auto "
-              >
-                <Button
-                  // type="text"
-                  // onClick={showModal}
-
-                  className="bg-gradient-to-tr from-pink-900 to-pink-600 text-white font-semibold  transition-all duration-200 w-[200px] mx-auto text-center cursor-pointer"
-                >
-                  {<RiLoginCircleFill className=" animate-pulse " />} Show Login
-                  Credentials
-                </Button>
-              </motion.div>
             </div>
           </motion.div>
         </div>
 
-        {/* Image Section */}
+        {/* Image Section (1/2 width on desktop, hidden on mobile) */}
         <div className="hidden md:block w-full md:w-1/2 relative overflow-hidden">
           <motion.div
             initial={{ opacity: 0, x: 50 }}
@@ -169,19 +184,13 @@ export default function LoginPage() {
             className="h-full w-full flex items-center justify-center"
           >
             <Image
-              alt="login image"
-              src={loginImage}
-              width={300}
-              height={300}
+              alt="register image"
+              src={registerImage}
+              
+              height={600}
               className="object-cover rounded-lg"
             />
           </motion.div>
-          {/* <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="absolute inset-0 bg-gradient-to-r from-pink-900/10 to-pink-800/10"
-          /> */}
         </div>
       </motion.div>
     </div>

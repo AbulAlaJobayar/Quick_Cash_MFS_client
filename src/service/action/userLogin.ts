@@ -3,8 +3,9 @@ import { setAccessToken } from "./setAccessToke";
 import { FieldValues } from "react-hook-form";
 
 const userLogin = async (data: FieldValues) => {
+  console.log("user login", process.env.BACKEND_URL);
   try {
-    const res = await fetch(`${process.env.BACKEND_URL}/auth/login`, {
+    const res = await fetch(`http://localhost:5000/api/v1/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -15,8 +16,11 @@ const userLogin = async (data: FieldValues) => {
     if (!res.ok) {
       return await res.json();
     }
+
     const userInfo = await res.json();
-    console.log('login function',userInfo)
+    if (userInfo.data.isLoggedIn) {
+      return userInfo.data;
+    }
     if (userInfo.data) {
       setAccessToken(userInfo.data, { redirect: "/dashboard" });
     }
@@ -26,4 +30,4 @@ const userLogin = async (data: FieldValues) => {
     throw error;
   }
 };
-export default userLogin
+export default userLogin;
