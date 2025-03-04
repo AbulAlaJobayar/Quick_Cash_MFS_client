@@ -7,7 +7,6 @@ import {
   removeFromLocalStorage,
   setToLocalStorage,
 } from "@/utils/localStroge";
-import { StringifyOptions } from "querystring";
 
 export const getNewAccessToken = async () => {
   return await axiosInstance({
@@ -44,7 +43,7 @@ export const removedUser = () => {
   return removeFromLocalStorage(authKey);
 };
 
-export const logOut = async (data:{id:string}) => {
+export const logOut = async (data: { id: string }) => {
   try {
     const res = await fetch(
       "http://localhost:5000/api/v1/auth/remove_all_devices",
@@ -53,7 +52,7 @@ export const logOut = async (data:{id:string}) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body:JSON.stringify(data),
+        body: JSON.stringify(data),
       }
     );
 
@@ -64,6 +63,5 @@ export const logOut = async (data:{id:string}) => {
     return res;
   } catch (error) {
     console.error("Error during logout:", error);
-
   }
 };

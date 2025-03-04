@@ -1,9 +1,8 @@
-
-import { setAccessToken } from "./setAccessToke";
+// Ensure the correct path
 import { FieldValues } from "react-hook-form";
+import { setAccessToken } from "./setAccessToke";
 
 const userLogin = async (data: FieldValues) => {
-  console.log("user login", process.env.BACKEND_URL);
   try {
     const res = await fetch(`http://localhost:5000/api/v1/auth/login`, {
       method: "POST",
@@ -13,21 +12,36 @@ const userLogin = async (data: FieldValues) => {
       body: JSON.stringify(data),
       credentials: "include",
     });
+
+    // Handle non-OK responses
     if (!res.ok) {
-      return await res.json();
+      const errorResponse = await res.json();
+      throw new Error(errorResponse.message || "Login failed. Please try again.");
     }
 
     const userInfo = await res.json();
+
+    // Ensure the response has the expected structure
+    if (!userInfo.data) {
+      throw new Error("Invalid response from the server.");
+    }
+
+    // Handle case where user is already logged in
     if (userInfo.data.isLoggedIn) {
-      return userInfo.data;
+      return userInfo;
     }
-    if (userInfo.data) {
-      setAccessToken(userInfo.data, { redirect: "/dashboard" });
+console.log("token from user file",userInfo.data.accessToken)
+    // Store the access token and redirect
+    if (userInfo.data.accessToken) {
+      setAccessToken(userInfo.data.accessToken,{ redirect: "/dashboard" });
+
     }
+console.log("userinfo",userInfo)
     return userInfo;
   } catch (error) {
     console.error("Error during user login:", error);
-    throw error;
+    throw new Error(error instanceof Error ? error.message : "An unexpected error occurred.");
   }
 };
+
 export default userLogin;

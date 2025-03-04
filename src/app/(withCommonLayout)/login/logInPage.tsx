@@ -51,10 +51,10 @@ const LoginPage=() =>{
   const handleSubmit = async (data: FormValues) => {
     try {
       const res = await userLogin(data);
-      console.log(res.isLoggedIn);
       // if 1 device is logged In
-      if (res.isLoggedIn) {
-        setToken(res.accessToken);
+      console.log("response login",res.data)
+      if (res.data.isLoggedIn) {
+        setToken(res.data.accessToken);
         setLogout(true);
       } else {
         storeUserInfo(res?.data?.accessToken);

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -16,6 +17,12 @@ import QKSInput from "@/components/shared/Form/QKSInput";
 import parsePhoneNumberFromString from "libphonenumber-js";
 import { MdOutlineEmail } from "react-icons/md";
 import { HiOutlineDocument } from "react-icons/hi2";
+
+import { toast } from "sonner";
+import userRegister from "@/service/action/userRegister";
+import userLogin from "@/service/action/userLogin";
+import { storeUserInfo } from "@/service/action/authServices";
+import { setAccessToken } from "@/service/action/setAccessToke";
 
 // Zod schema for registration form validation
 const mobileNumber = z.string().refine(
@@ -38,16 +45,57 @@ const registerSchema = z.object({
     .string()
     .min(10, { message: "NID must be at least 10 characters long" }),
 });
-
+type formValues = z.infer<typeof registerSchema>;
 export default function RegisterPage() {
   const [showPin, setShowPin] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
 
+  const onSubmit = async (data: formValues) => {
+    console.log("Registration Data:", data); // Debugging only
 
+    try {
+      // Step 1: Register the user
+      const res = await userRegister(data);
 
-  const onSubmit = (data) => {
-    console.log("Registration Data:", data);
-    // Handle registration logic here (e.g., API call)
+      if (!res || !res.data) {
+        throw new Error(
+          res?.message || "Registration failed. Please try again."
+        );
+      }
+
+      console.log("Registration Response:", res.data); // Debugging only
+      toast.success(res.message);
+
+      // Step 2: Log in the user after successful registration
+      const userLoginData = {
+        mobileNumber: data.mobileNumber,
+        pin: data.pin,
+      };
+
+      const login = await userLogin(userLoginData);
+      console.log("login", login.data);
+
+      if (!login || !login.data) {
+        throw new Error("Login failed. Please try again.");
+      }
+
+      // Store the access token securely
+      storeUserInfo(login.data.accessToken);
+      setAccessToken(login.data.accessToken, { redirect: "/dashboard" });
+
+      // Show success message
+      toast.success("Registration and login successful!", {
+        description: res.message,
+        duration: 5000,
+      });
+    } catch (error: any) {
+      console.error("Error during registration or login:", error); // Debugging only
+
+      // Show error message
+      toast.error(
+        error.message || "An unexpected error occurred. Please try again."
+      );
+    }
   };
 
   return (
@@ -64,53 +112,59 @@ export default function RegisterPage() {
             <div className="bg-white dark:bg-black rounded-md p-8 shadow-xl">
               <div className="mb-6 text-center">
                 <h1 className="text-2xl font-bold text-[#333333] dark:text-white">
-                 Sign Up
+                  Sign Up
                 </h1>
               </div>
-              <QKSFrom resolver={zodResolver(registerSchema)} onSubmit={onSubmit}>
-                {/* Name Field */}
-                <QKSInput
-                  type="text"
-                  required
-                  label="Name"
-                  name="name"
-                  placeholder="Enter your name"
-                  className="w-full my-4 border-pink-900 drop-shadow-xs shadow-pink-700"
-                  icon={<CiUser />}
-                />
+              <QKSFrom
+                resolver={zodResolver(registerSchema)}
+                onSubmit={onSubmit}
+              >
+                <div className=" grid md:grid-cols-2 md:gap-4">
+                  {/* Name Field */}
+                  <QKSInput
+                    type="text"
+                    required
+                    label="Name"
+                    name="name"
+                    placeholder="Enter your name"
+                    className="w-full my-4 border-pink-900 drop-shadow-xs shadow-pink-700"
+                    icon={<CiUser />}
+                  />
 
-                {/* Mobile Number Field */}
-                <QKSInput
-                  type="text"
-                  required
-                  label="Mobile"
-                  name="mobileNumber"
-                  placeholder="+8801234567891"
-                  className="w-full my-4 border-pink-900 drop-shadow-xs shadow-pink-700"
-                  icon={<CiMobile2 />}
-                />
+                  {/* Mobile Number Field */}
+                  <QKSInput
+                    type="text"
+                    required
+                    label="Mobile"
+                    name="mobileNumber"
+                    placeholder="+8801234567891"
+                    className="w-full my-4 border-pink-900 drop-shadow-xs shadow-pink-700"
+                    icon={<CiMobile2 />}
+                  />
+                </div>
+                <div className="grid md:grid-cols-2 md:gap-4">
+                  {/* Email Field */}
+                  <QKSInput
+                    type="email"
+                    required
+                    label="Email"
+                    name="email"
+                    icon={<MdOutlineEmail />}
+                    placeholder="example@example.com"
+                    className="w-full my-4 border-pink-900 drop-shadow-xs shadow-pink-700"
+                  />
 
-                {/* Email Field */}
-                <QKSInput
-                  type="email"
-                  required
-                  label="Email"
-                  name="email"
-                  icon={<MdOutlineEmail />}
-                  placeholder="example@example.com"
-                  className="w-full my-4 border-pink-900 drop-shadow-xs shadow-pink-700"
-                />
-
-                {/* NID Field */}
-                <QKSInput
-                  type="text"
-                  required
-                  label="NID"
-                  name="nid"
-                  icon={<HiOutlineDocument />}
-                  placeholder="Enter your NID number"
-                  className="w-full my-4 border-pink-900 drop-shadow-xs shadow-pink-700"
-                />
+                  {/* NID Field */}
+                  <QKSInput
+                    type="text"
+                    required
+                    label="NID"
+                    name="nid"
+                    icon={<HiOutlineDocument />}
+                    placeholder="Enter your NID number"
+                    className="w-full my-4 border-pink-900 drop-shadow-xs shadow-pink-700"
+                  />
+                </div>
 
                 {/* PIN Field */}
                 <div className="relative">
@@ -186,8 +240,7 @@ export default function RegisterPage() {
             <Image
               alt="register image"
               src={registerImage}
-              
-              height={600}
+              height={400}
               className="object-cover rounded-lg"
             />
           </motion.div>
