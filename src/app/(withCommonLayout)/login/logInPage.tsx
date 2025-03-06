@@ -18,10 +18,16 @@ import { RiLoginCircleFill } from "react-icons/ri";
 import QKSModel from "../../../components/shared/Model/QKSModel";
 import CredentialModel from "./CradentialModel";
 import userLogin from "@/service/action/userLogin";
-import { logOut, storeUserInfo } from "@/service/action/authServices";
+import {
+  logOut,
+  removedUser,
+  storeUserInfo,
+} from "@/service/action/authServices";
 import { toast } from "sonner";
 import { decodedToken } from "@/utils/jwt";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { deleteCookies } from "@/service/action/deleteCookies";
+import { authKey } from "@/constant/authKey";
 
 const mobileNumber = z.string().refine(
   (value) => {
@@ -35,24 +41,25 @@ const mobileNumber = z.string().refine(
 );
 
 const formSchema = z.object({
-  mobileNumber:mobileNumber,
+  mobileNumber: mobileNumber,
   pin: z.string().min(5, "pin must be at least 5 characters"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
-const LoginPage=() =>{
+const LoginPage = () => {
   const [showPin, setShowPin] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [open, setOpen] = useState(false);
   const [logout, setLogout] = useState(false);
   const [token, setToken] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (data: FormValues) => {
     try {
       const res = await userLogin(data);
       // if 1 device is logged In
-      console.log("response login",res.data)
+      console.log("response login", res.data);
       if (res.data.isLoggedIn) {
         setToken(res.data.accessToken);
         setLogout(true);
@@ -77,12 +84,15 @@ const LoginPage=() =>{
     const { id } = decodedToken(token);
     try {
       const res = await logOut({ id });
-      if (res) {
-        setOpen(false);
-        toast.success("Logged out successfully");
+      if (!res) {
+        throw new Error("something went wrong");
       }
+      await deleteCookies([authKey, "refreshToken"]);
+      removedUser();
       setOpen(false);
-      redirect("/login");
+      toast.success("Logged out successfully");
+      router.push("/login");
+      router.refresh();
     } catch (error) {
       console.log(error);
     }
@@ -242,5 +252,5 @@ const LoginPage=() =>{
       </QKSModel>
     </div>
   );
-}
-export default LoginPage
+};
+export default LoginPage;
