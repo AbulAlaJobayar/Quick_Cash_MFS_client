@@ -11,12 +11,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import AuthButton from "./AuthButton";
 import { isLoggedIn } from "@/service/action/authServices";
 
-
 export default function Navbar() {
   const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false); 
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); 
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const pathName = usePathname();
   const userLoggedIn = isLoggedIn(); // Check if user is logged in
   // Handle scroll event
@@ -49,38 +48,41 @@ export default function Navbar() {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
- 
-
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/services", label: "Services" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
-    
   ];
 
   return (
     <nav
-      className={`sticky top-0 z-50 p-4 transition-colors duration-300 ${
+      className={`sticky top-0 z-50 p-4 dark:bg-black transition-colors duration-300 ${
         isScrolled
-          ? "bg-background/95 backdrop-blur-md border-b" // Add background color and border when scrolled
-          : "bg-transparent border-transparent" // Transparent background and no border when at the top
+          ? "bg-background/95 dark:bg-black bg-gradient-to-r from-pink-800 to-pink-700 backdrop-blur-md border-b border-pink-400 text-white rounded-md" // Add background color and border when scrolled
+          : "bg-gradient-to-tr dark:bg-black from-pink-600 to-pink-700 text-white hover:text-white" //"bg-transparent border-transparent" // Transparent background and no border when at the top
       }`}
     >
-      <div className="container flex items-center justify-between">
-        {/* Logo or Brand */}
+      <div className="mx-auto container flex items-center justify-between">
+        {/* Logo */}
         <Link href="/" className="text-lg font-bold">
-          MyApp
+          QKash
         </Link>
 
         {/* Desktop Navigation Links */}
         <div className="hidden md:flex space-x-4 relative">
           {navLinks.map((link) => (
-            <motion.div key={link.href} className="relative">
+            <motion.div
+              key={link.href}
+              className="relative"
+              initial={{ scale: 1 }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
               <Link
                 href={link.href}
-                className={`hover:text-primary transition-colors ${
-                  pathName === link.href ? "text-primary" : ""
+                className={`hover:text-white ${
+                  pathName === link.href ? "text-white" : ""
                 }`}
               >
                 {link.label}
@@ -88,7 +90,7 @@ export default function Navbar() {
               {pathName === link.href && (
                 <motion.div
                   layoutId="underline"
-                  className="absolute bottom-0 left-0 w-full h-0.5 bg-red-500"
+                  className="absolute bottom-0 left-0 w-full h-0.5 bg-red-400"
                   transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                 />
               )}
@@ -102,10 +104,12 @@ export default function Navbar() {
           {userLoggedIn ? (
             <div className="hidden md:block relative">
               <Avatar onClick={toggleDropdown}>
-                <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
-                />
+                
+                  <AvatarImage
+                    src="https://github.com/shadcn.png"
+                    alt="@shadcn"
+                  />
+               
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
 
@@ -117,19 +121,19 @@ export default function Navbar() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.3 }}
-                    className="absolute right-0 mt-2 w-48 bg-background border rounded-lg shadow-lg"
+                    className="absolute right-0 mt-2 w-48 dark:bg-black bg-pink-600 border-pink-700 rounded-lg shadow-lg"
                   >
                     <div className="p-2 ">
                       <Link
                         href="/dashboard"
-                        className="flex items-center p-2 hover:bg-accent rounded-lg"
+                        className="flex items-center p-2 hover:bg-pink-700 rounded-lg"
                       >
                         <LayoutDashboard className="h-4 w-4 mr-2" />
                         Dashboard
                       </Link>
                       <button
                         onClick={toggleTheme}
-                        className="flex items-center w-full p-2 hover:bg-accent rounded-lg"
+                        className="flex items-center w-full p-2 hover:bg-pink-700 rounded-lg"
                       >
                         {theme === "light" ? (
                           <Moon className="h-4 w-4 mr-2" />
@@ -138,7 +142,7 @@ export default function Navbar() {
                         )}
                         Switch Theme
                       </button>
-                     <AuthButton/>
+                      <AuthButton />
                     </div>
                   </motion.div>
                 )}
@@ -156,12 +160,17 @@ export default function Navbar() {
                   )}
                 </Button>
               </motion.div>
-              <Link
+             <motion.div
+             initial={{ scale: 1 }}
+             whileHover={{ scale: 1.1 }}
+              >
+             <Link
                 href="/login"
-                className="hover:text-primary transition-colors"
+                className="hover:text-white "
               >
                 Login
               </Link>
+             </motion.div>
             </div>
           )}
 
@@ -188,19 +197,19 @@ export default function Navbar() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
-              className="md:hidden absolute top-16 right-4 bg-background border rounded-lg shadow-lg p-4 w-48"
+              className="md:hidden absolute top-16 right-4 dark:bg-black bg-pink-600 border-pink-700 border rounded-lg shadow-lg p-4 w-48"
             >
               {/* Navigation Links */}
               {navLinks.map((link) => (
                 <motion.div
                   key={link.href}
                   whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileTap={{ scale: 0.9 }}
                 >
                   <Link
                     href={link.href}
-                    className={`block py-2 hover:text-primary transition-colors ${
-                      pathName === link.href ? "text-primary" : ""
+                    className={`flex items-center p-2 hover:bg-pink-700 rounded-lg ${
+                      pathName === link.href ? "text-white border border-pink-900" : ""
                     }`}
                   >
                     {link.label}
@@ -214,23 +223,24 @@ export default function Navbar() {
                   {" "}
                   <motion.div
                     whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileTap={{ scale: 0.8 }}
                   >
                     <Link
                       href="/dashboard"
-                      className="flex items-center py-2 hover:bg-accent rounded-lg"
+                      className="flex items-center p-2 hover:bg-pink-700 rounded-lg"
                     >
                       <LayoutDashboard className="h-4 w-4 mr-2" />
                       Dashboard
                     </Link>
                   </motion.div>
                   <motion.div
+                  initial={{ scale: 1 }}
                     whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileTap={{ scale: 0.8 }}
                   >
                     <button
                       onClick={toggleTheme}
-                      className="flex items-center w-full py-2 hover:text-primary transition-colors"
+                      className="flex items-center p-2 hover:bg-pink-700 rounded-lg"
                     >
                       {theme === "light" ? (
                         <Moon className="h-4 w-4 mr-2" />
@@ -240,10 +250,11 @@ export default function Navbar() {
                       Switch Theme
                     </button>
                   </motion.div>
-               <AuthButton/>
+                  <AuthButton />
                 </>
               ) : (
                 <motion.div
+                initial={{ scale: 1 }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >

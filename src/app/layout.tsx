@@ -30,10 +30,9 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
-        >
-          <div className="container mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8">
+        > 
             {children}
-          </div>
+      
           <Toaster richColors/>
         </ThemeProvider>
       </body>

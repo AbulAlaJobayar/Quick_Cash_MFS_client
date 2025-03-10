@@ -1,7 +1,16 @@
+import Carousel from "./Carousel";
+import CurrentOffers from "./CurrentOffers";
+import Frauds from "./Frauds";
+import QkasServices from "./QkasServices";
+
 const HomePage = () => {
+  
   return (
     <div>
-      <h1>This is HomePage component</h1>
+      <Carousel/>
+      <CurrentOffers/>
+      <QkasServices/>
+      <Frauds/>
     </div>
   );
 };
