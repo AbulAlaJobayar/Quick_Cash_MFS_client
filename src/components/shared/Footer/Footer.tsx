@@ -1,12 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin, Clock } from "lucide-react";
+import { Facebook, Instagram, Linkedin, Mail, Phone, MapPin, Clock } from "lucide-react";
 import Link from "next/link";
+import { MdWhatsapp } from "react-icons/md";
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-tr from-pink-600 to-pink-800 text-white py-12">
+    <footer className="bg-[#070D13] text-white py-12"
+    clip-polygon
+    >
       <div className="container mx-auto px-4">
         {/* Footer Columns */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-8 text-center">
@@ -17,7 +20,7 @@ const Footer = () => {
             transition={{ duration: 0.5 }}
           >
             <h3 className="text-xl font-bold mb-4">About Us</h3>
-            <p className="text-gray-400">
+            <p className="text-white">
               QKash is a leading digital financial service provider, empowering
               millions of users with fast, secure, and accessible transactions.
             </p>
@@ -32,22 +35,22 @@ const Footer = () => {
             <h3 className="text-xl font-bold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/about" className="text-gray-400 hover:text-white">
+                <Link href="/about" className="text-white hover:text-white">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/services" className="text-gray-400 hover:text-white">
+                <Link href="/services" className="text-white hover:text-white">
                   Services
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-400 hover:text-white">
+                <Link href="/contact" className="text-white hover:text-white">
                   Contact Us
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="text-gray-400 hover:text-white">
+                <Link href="/faq" className="text-white hover:text-white">
                   FAQ
                 </Link>
               </li>
@@ -61,18 +64,18 @@ const Footer = () => {
             transition={{ duration: 0.5, delay: 0.4 }}
           >
             <h3 className="text-xl font-bold mb-4">Contact Info</h3>
-            <ul className="space-y-2 text-gray-400">
+            <ul className="space-y-2 text-white">
               <li className="flex items-center justify-center space-x-2">
                 <Phone className="w-5 h-5" />
-                <span>+880 2 5566 3001</span>
+                <span>+8801928210545</span>
               </li>
               <li className="flex items-center justify-center space-x-2">
                 <Mail className="w-5 h-5" />
-                <span>support@bkash.com</span>
+                <span>abulalajobayar@gmail.com</span>
               </li>
               <li className="flex items-center justify-center space-x-2">
                 <MapPin className="w-5 h-5" />
-                <span>SKS Tower, Dhaka</span>
+                <span>Gazi Tower, Khulna</span>
               </li>
               <li className="flex items-center justify-center space-x-2">
                 <Clock className="w-5 h-5" />
@@ -90,26 +93,26 @@ const Footer = () => {
             <h3 className="text-xl font-bold mb-4">Follow Us</h3>
             <div className="flex justify-center space-x-4">
               <Link
-                href="https://facebook.com"
-                className="text-gray-400 hover:text-white"
+                href="https://www.facebook.com/abul.ala.jobayar.2024/"
+                className="text-white hover:text-white"
               >
                 <Facebook className="w-6 h-6" />
               </Link>
               <Link
-                href="https://twitter.com"
-                className="text-gray-400 hover:text-white"
+                href="https://wa.me/+8801928210545" target="blank"
+                className="text-white hover:text-white"
               >
-                <Twitter className="w-6 h-6" />
+                <MdWhatsapp className="w-6 h-6" />
               </Link>
               <Link
                 href="https://instagram.com"
-                className="text-gray-400 hover:text-white"
+                className="text-white hover:text-white"
               >
                 <Instagram className="w-6 h-6" />
               </Link>
               <Link
-                href="https://linkedin.com"
-                className="text-gray-400 hover:text-white"
+                href="https://www.linkedin.com/in/abulalajobayar/"
+                className="text-white hover:text-white"
               >
                 <Linkedin className="w-6 h-6" />
               </Link>
@@ -119,18 +122,18 @@ const Footer = () => {
 
         {/* Copyright Section */}
         <motion.div
-          className="border-t border-gray-800 pt-8 text-center"
+          className="border-t border-white pt-4 text-center flex justify-between"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.8 }}
         >
-          <p className="text-gray-400">
+          <p className="text-white">
             © {new Date().getFullYear()} QKash. All rights reserved.
           </p>
-          <p className="text-gray-400 mt-2">
+          <p className="text-white mt-2">
             Made with ❤️ by {' '}
             <Link
-              href="https://yourwebsite.com"
+              href="https://portfolio-rose-theta-63.vercel.app/"
               className="text-white hover:underline"
             >
             Abul Ala Jobayar

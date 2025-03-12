@@ -59,7 +59,7 @@ export default function Navbar() {
     <nav
       className={`sticky top-0 z-50 p-4 dark:bg-black transition-colors duration-300 ${
         isScrolled
-          ? "bg-background/95 dark:bg-black bg-gradient-to-r from-pink-800 to-pink-700 backdrop-blur-md border-b border-pink-400 text-white rounded-b-md" // Add background color and border when scrolled
+          ? "bg-background/95 dark:bg-black bg-gradient-to-r from-pink-800 to-pink-700 backdrop-blur-md  text-white rounded-b-md" // Add background color and border when scrolled
           : "bg-gradient-to-tr dark:bg-black from-pink-600 to-pink-700 text-white hover:text-white" //"bg-transparent border-transparent" // Transparent background and no border when at the top
       }`}
     >

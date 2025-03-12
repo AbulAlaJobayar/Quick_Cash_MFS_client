@@ -1,14 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-
+import image1 from "@/assets/mfs1.jpg";
+import image2 from "@/assets/mfs2.jpg";
+import image3 from "@/assets/mfs3.jpg";
 interface Slide {
-  image: string;
+  image: any;
   title: string;
   description: string;
 }
+
 
 const Carousel = () => {
   const [currentSlide, setCurrentSlide] = useState<number>(0);
@@ -17,19 +21,19 @@ const Carousel = () => {
 
   const slides: Slide[] = [
     {
-      image: "https://i.ibb.co.com/QFHZFydY/3rd.webps",
-      title: "Send Money Easily",
-      description: "Transfer money to anyone, anywhere in Bangladesh.",
+      image: image1,
+      title: "Discount Flight Booking",
+      description: "Booking Flight to anyone, anywhere in Bangladesh.",
     },
     {
-      image: "https://i.ibb.co.com/xqXJhqrw/1st.webp",
-      title: "Pay Bills Online",
-      description: "Pay your utility bills in just a few clicks.",
+      image: image2,
+      title: "Booking Hotel",
+      description: "Pay your Booking hotel bills in just a few clicks.",
     },
     {
-      image: "https://i.ibb.co.com/HTWH96W0/2nd.webp",
-      title: "Recharge Mobile",
-      description: "Recharge your mobile balance instantly.",
+      image: image3,
+      title: "Air Ticket",
+      description: "Purchase 15% discount on Air Ticket.",
     },
   ];
 

@@ -88,12 +88,12 @@ const ContactUs = () => {
               {
                 icon: <Phone className="w-8 h-8 text-[#f9004d]" />,
                 title: "Call Us",
-                description: "Dial 16247 or 02-55663001 for 24/7 support.",
+                description: "Dial +8801928210545 for 24/7 support.",
               },
               {
                 icon: <Mail className="w-8 h-8 text-[#f9004d]" />,
                 title: "Email Us",
-                description: "Send your queries to support@bkash.com.",
+                description: "Send your queries to abulalajobayar@gmail.com.",
               },
               {
                 icon: <MessageCircle className="w-8 h-8 text-[#f9004d]" />,
@@ -139,15 +139,15 @@ const ContactUs = () => {
             {[
               {
                 location: "Dhaka Mohakhali",
-                address: "SKS Tower, Ground Floor, 7 VIP Road, Mohakhali, Dhaka - 1206",
+                address: "gazi Tower, Ground Floor, 7 VIP Road, Mohakhali, Dhaka - 1206",
               },
               {
                 location: "Chittagong Agrabad",
-                address: "Agrabad Center, 2470/A, Chowmuhani, Ground Floor, SK Mujib Road, Chittagong-4100",
+                address: "Gazi Center, 2470/A, Chowmuhani, Ground Floor, SK Mujib Road, Chittagong-4100",
               },
               {
                 location: "Sylhet",
-                address: "JR Tower, 1st Floor, 23 ABAS, Jail Road, Sylhet-3100",
+                address: "Gazi Tower, 1st Floor, 23 ABAS, Jail Road, Sylhet-3100",
               },
             ].map((office, index) => (
               <motion.div key={index} variants={itemVariants}>
