@@ -11,6 +11,12 @@ export const drawerItem = (role: userRole): DrawerItem[] => {
         title: "Dashboard",
         path: `${role}`,
         icon: LayoutDashboardIcon,
+        child: [
+          {
+            title: "Agent Management",
+            path: `${role}/agent`,
+          },
+        ],
       });
       break;
     case User_Role.agent:
@@ -25,10 +31,17 @@ export const drawerItem = (role: userRole): DrawerItem[] => {
         title: "Dashboard",
         path: `${role}`,
         icon: LayoutDashboardIcon,
+        child: [
+          {
+            title: "Agent Management",
+            path: `${role}/agent`,
+          },
+        ],
       });
       break;
     default:
       break;
   }
+  console.log(roleMenus);
   return [...roleMenus];
 };
