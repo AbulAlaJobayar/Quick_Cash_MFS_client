@@ -10,7 +10,7 @@ import {
 
 export const getNewAccessToken = async () => {
   return await axiosInstance({
-    url: `${process.env.BACKEND_URL}/auth/refresh-token`,
+    url: `http://localhost:5000/api/v1/auth/refresh-token`,
     method: "POST",
     headers: { "Content-Type": "application/json" },
     withCredentials: true,

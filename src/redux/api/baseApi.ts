@@ -1,11 +1,12 @@
 import { axiosBaseQuery } from "@/helper/axios/axiosBaseQuery";
 import { createApi } from "@reduxjs/toolkit/query/react";
+import { tagTypeList } from "../tagType";
 
 export const baseApi = createApi({
   reducerPath: "api",
   baseQuery: axiosBaseQuery({
-    baseUrl:`${process.env.BACKEND_URL}`,
+    baseUrl: `http://localhost:5000/api/v1`,
   }),
   endpoints: () => ({}),
-  //   todo :: set tag type
+  tagTypes: tagTypeList,
 });

@@ -2,13 +2,14 @@ import { tagType } from './../tagType';
 import { baseApi } from "./baseApi";
 const authApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    getMe: build.query({
+    todayTransaction: build.query({
       query: () => ({
-        url: "/users/user_profile",
+        url: "/transaction/today_transaction",
         method: "GET",
       }),
-      providesTags:[tagType.auth]
+      providesTags:[tagType.transaction]
     }),
+    
   }),
 });
-export const { useGetMeQuery } = authApi;
+export const {useTodayTransactionQuery } = authApi;

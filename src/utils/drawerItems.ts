@@ -9,7 +9,7 @@ export const drawerItem = (role: userRole): DrawerItem[] => {
     case User_Role.admin:
       roleMenus.push({
         title: "Dashboard",
-        path: `${role}`,
+        path: '/dashboard',
         icon: LayoutDashboardIcon,
         child: [
           {
@@ -22,19 +22,19 @@ export const drawerItem = (role: userRole): DrawerItem[] => {
     case User_Role.agent:
       roleMenus.push({
         title: "Dashboard",
-        path: `${role}`,
+        path: `/dashboard`,
         icon: LayoutDashboardIcon,
       });
       break;
     case User_Role.user:
       roleMenus.push({
         title: "Dashboard",
-        path: `${role}`,
+        path: `/dashboard`,
         icon: LayoutDashboardIcon,
         child: [
           {
             title: "Agent Management",
-            path: `${role}/agent`,
+            path: ``,
           },
         ],
       });
