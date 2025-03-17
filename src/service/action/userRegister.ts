@@ -3,7 +3,7 @@ import { FieldValues } from "react-hook-form";
 const userRegister = async (data: FieldValues) => {
   console.log("user login", process.env.BACKEND_URL);
   try {
-    const res = await fetch(`http://localhost:5000/api/v1/users/create_user`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/create_user`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -1,4 +1,4 @@
-import { tagType } from './../tagType';
+import { tagType } from "./../tagType";
 import { baseApi } from "./baseApi";
 const authApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -7,9 +7,26 @@ const authApi = baseApi.injectEndpoints({
         url: "/transaction/today_transaction",
         method: "GET",
       }),
-      providesTags:[tagType.transaction]
+      providesTags: [tagType.transaction],
     }),
-    
+    myTransaction: build.query({
+      query: () => ({
+        url: "/transaction/my_transaction",
+        method: "GET",
+      }),
+      providesTags: [tagType.transaction],
+    }),
+    monthlyTransaction: build.query({
+      query: () => ({
+        url: "/transaction/monthly",
+        method: "GET",
+      }),
+      providesTags: [tagType.transaction],
+    }),
   }),
 });
-export const {useTodayTransactionQuery } = authApi;
+export const {
+  useTodayTransactionQuery,
+  useMyTransactionQuery,
+  useMonthlyTransactionQuery,
+} = authApi;

@@ -17,12 +17,17 @@ export const metadata: Metadata = {
   description: "A secure mobile financial service platform",
 };
 
+
+
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
+
+   
     <html lang="en">
       <body className={roboto.className}>
         <ThemeProvider

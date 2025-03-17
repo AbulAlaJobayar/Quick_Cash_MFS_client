@@ -1,6 +1,6 @@
 "use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import {
   Table,
   TableBody,
@@ -21,24 +21,13 @@ import {
 } from "recharts";
 import { motion } from "framer-motion";
 import { useGetMeQuery } from "@/redux/api/authApi";
+
+import {
+  useMonthlyTransactionQuery,
+  useMyTransactionQuery,
+  useTodayTransactionQuery,
+} from "@/redux/api/transactionApi";
 import LoadingSpinner from "../shared/LoadingSpinner";
-import { useTodayTransactionQuery } from "@/redux/api/transactionApi";
-const data = [
-  { name: "Jan", uv: 4000, pv: 2400, amt: 2400 },
-  { name: "Feb", uv: 3000, pv: 1398, amt: 2210 },
-  { name: "Mar", uv: 2000, pv: 9800, amt: 2290 },
-  { name: "Apr", uv: 2780, pv: 3908, amt: 2000 },
-  { name: "May", uv: 1890, pv: 4800, amt: 2181 },
-  { name: "Jun", uv: 2390, pv: 3800, amt: 2500 },
-  { name: "Jul", uv: 3490, pv: 4300, amt: 2100 },
-];
-
-const recentCashouts = [
-  { id: 1, amount: 1200, date: "2023-10-01", recipient: "John Doe" },
-  { id: 2, amount: 800, date: "2023-10-02", recipient: "Jane Smith" },
-  { id: 3, amount: 1500, date: "2023-10-03", recipient: "Alice Johnson" },
-];
-
 // Animation variants for Framer Motion
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -56,29 +45,50 @@ const itemVariants = {
 };
 
 const Dashboard = () => {
-  const { data: me, isLoading:userLoading } = useGetMeQuery("");
+  const { data: me, isLoading: userLoading } = useGetMeQuery("");
+  const { data: todayTransaction, isLoading: transactionLoading } =
+    useTodayTransactionQuery("");
+  const { data: recentCashouts, isLoading: myTransactionLoading } =
+    useMyTransactionQuery("");
 
-const{ data:todayTransaction, isLoading:transactionLoading } = useTodayTransactionQuery('')
-console.log(me)
-console.log({todayTransaction})
-  if (userLoading || transactionLoading) {
-    return <LoadingSpinner/>;
+  const { data: monthly, isLoading: monthlyLoading } =
+    useMonthlyTransactionQuery("");
+  if (
+    userLoading ||
+    transactionLoading ||
+    myTransactionLoading ||
+    monthlyLoading
+  ) {
+    return <LoadingSpinner />;
   }
 
   return (
-    <motion.div
-      
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
+    <motion.div variants={containerVariants} initial="hidden" animate="visible">
       {/* Grid for the top 4 cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
-          { title: "Current Balance", value: me?.data.balance? me?.data.balance:0},
-          { title: "Today's Cash Out", value: todayTransaction?.data?.cashout? todayTransaction?.data?.cashout:0},
-          { title: "Today's Cash In", value: todayTransaction?.data?.cashin? todayTransaction?.data?.cashin:0},
-          { title: "Send Money", value: todayTransaction?.data?.sendMoney? todayTransaction?.data?.sendMoney:0},
+          {
+            title: "Current Balance",
+            value: me?.data.balance ? me?.data.balance : 0,
+          },
+          {
+            title: "Today's Cash Out",
+            value: todayTransaction?.data?.cashout
+              ? todayTransaction?.data?.cashout
+              : 0,
+          },
+          {
+            title: "Today's Cash In",
+            value: todayTransaction?.data?.cashin
+              ? todayTransaction?.data?.cashin
+              : 0,
+          },
+          {
+            title: "Send Money",
+            value: todayTransaction?.data?.sendMoney
+              ? todayTransaction?.data?.sendMoney
+              : 0,
+          },
         ].map((card, index) => (
           <motion.div key={index} variants={itemVariants}>
             <Card>
@@ -86,7 +96,7 @@ console.log({todayTransaction})
                 <CardTitle>{card.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold"> 	&#x9F3; {card.value}</p>
+                <p className="text-2xl font-bold"> &#x9F3; {card.value}</p>
               </CardContent>
             </Card>
           </motion.div>
@@ -101,14 +111,14 @@ console.log({todayTransaction})
               <CardTitle>Total Year Sales</CardTitle>
             </CardHeader>
             <CardContent>
-              <BarChart width={500} height={300} data={data}>
+              <BarChart width={450} height={300} data={monthly?.data || []}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="pv" fill="#8884d8" />
-                <Bar dataKey="uv" fill="#82ca9d" />
+                <Bar dataKey="totalAmount" fill="#8884d8" name="Total Amount" />
+                <Bar dataKey="totalFees" fill="#82ca9d" name="Total Fees" />
               </BarChart>
             </CardContent>
           </Card>
@@ -130,13 +140,14 @@ console.log({todayTransaction})
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {recentCashouts.map((cashout) => (
-                    <TableRow key={cashout.id}>
-                      <TableCell>${cashout.amount}</TableCell>
-                      <TableCell>{cashout.date}</TableCell>
-                      <TableCell>{cashout.recipient}</TableCell>
-                    </TableRow>
-                  ))}
+                  {recentCashouts &&
+                    recentCashouts?.data.slice(0, 5).map((cashout: any) => (
+                      <TableRow key={cashout.id}>
+                        <TableCell>${cashout.amount}</TableCell>
+                        <TableCell>{cashout.date}</TableCell>
+                        <TableCell>{cashout.recipient}</TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             </CardContent>

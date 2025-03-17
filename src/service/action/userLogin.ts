@@ -4,7 +4,7 @@ import { setAccessToken } from "./setAccessToke";
 
 const userLogin = async (data: FieldValues) => {
   try {
-    const res = await fetch(`http://localhost:5000/api/v1/auth/login`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

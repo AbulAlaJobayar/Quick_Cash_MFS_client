@@ -10,7 +10,7 @@ import {
 
 export const getNewAccessToken = async () => {
   return await axiosInstance({
-    url: `http://localhost:5000/api/v1/auth/refresh-token`,
+    url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/refresh-token`,
     method: "POST",
     headers: { "Content-Type": "application/json" },
     withCredentials: true,
@@ -46,7 +46,7 @@ export const removedUser = () => {
 export const logOut = async (data: { id: string }) => {
   try {
     const res = await fetch(
-      "http://localhost:5000/api/v1/auth/remove_all_devices",
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/remove_all_devices`,
       {
         method: "PUT",
         headers: {

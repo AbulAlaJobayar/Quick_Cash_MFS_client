@@ -8,7 +8,6 @@ import { MdWhatsapp } from "react-icons/md";
 const Footer = () => {
   return (
     <footer className="bg-[#070D13] text-white py-12"
-    clip-polygon
     >
       <div className="container mx-auto px-4">
         {/* Footer Columns */}
