@@ -1,6 +1,6 @@
 import { tagType } from "./../tagType";
 import { baseApi } from "./baseApi";
-const authApi = baseApi.injectEndpoints({
+const transactionApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     todayTransaction: build.query({
       query: () => ({
@@ -29,4 +29,4 @@ export const {
   useTodayTransactionQuery,
   useMyTransactionQuery,
   useMonthlyTransactionQuery,
-} = authApi;
+} = transactionApi;

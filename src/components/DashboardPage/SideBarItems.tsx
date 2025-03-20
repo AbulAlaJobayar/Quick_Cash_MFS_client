@@ -10,7 +10,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const SideBarItems = ({ item }: { item: DrawerItem }) => {
-  const linkPath = `/dashboard/${item.path}`;
+  const linkPath = `${item.path}`;
   const pathName = usePathname();
   const isActive = pathName===linkPath; // Ensures matching for nested routes
 

@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const Frauds = () => {
   return (
-    <div className="bg-gradient-to-r from-pink-50 to-pink-100 my-20 py-20">
+    <div className="bg-pink-100 dark:bg-black my-20 py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
           {/* Image Section */}
@@ -22,10 +22,10 @@ const Frauds = () => {
 
           {/* Text Section */}
           <div className="space-y-6 max-w-md mx-auto md:mx-0">
-            <h1 className="text-3xl  font-bold text-gray-800">
+            <h1 className="text-3xl  font-bold text-gray-800 dark:text-white">
               Beware of Frauds
             </h1>
-            <p className="text-lg text-gray-600 leading-relaxed">
+            <p className="text-lg text-gray-600 leading-relaxed dark:text-white">
               Do not share the PIN, OTP, or account balance of your QKash account
               with anyone. Fraudsters can take advantage of your vulnerability to
               steal your hard-earned money from your account. Even by using your

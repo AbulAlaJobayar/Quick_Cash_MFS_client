@@ -2,14 +2,12 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
   SidebarRail,
 } from "../ui/sidebar";
-import NavUser from "./NavUser";
 import Link from "next/link";
 import { drawerItem } from "@/utils/drawerItems";
 import { useEffect, useState } from "react";
@@ -51,9 +49,6 @@ const SideBar = () => {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser />
-      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

@@ -28,10 +28,10 @@ const EveryLife = () => {
     <section className="container mx-auto my-20 px-6 md:px-0">
       {/* Heading Section */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">
+        <h1 className="text-4xl font-bold text-gray-800 mb-4 dark:text-white">
           QKash in Everyday Life
         </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto dark:text-white">
           QKash is for everyone. We are here to make your life easier and better.
           Whether you&apos;re a farmer, a student, or a business owner, QKash is
           designed to simplify your daily transactions.
@@ -39,7 +39,7 @@ const EveryLife = () => {
       </div>
 
       {/* Image Grid Section */}
-      <div className="border shadow-lg p-5 rounded-lg ring-1 ring-gray-200 overflow-hidden bg-white">
+      <div className="border shadow-lg p-5 rounded-lg ring-1 ring-gray-200 overflow-hidden bg-white dark:bg-black">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {images.map((image) => (
             <div

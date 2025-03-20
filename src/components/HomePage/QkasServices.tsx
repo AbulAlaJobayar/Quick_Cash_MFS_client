@@ -14,7 +14,7 @@ const QkasServices = () => {
         <div className="flex-grow h-px bg-gray-300"></div>
 
         {/* Middle Text */}
-        <h2 className="mx-4 text-xl md:text-3xl font-semibold text-gray-700 whitespace-nowrap">
+        <h2 className="mx-4 text-xl md:text-3xl font-semibold text-gray-700 whitespace-nowrap dark:text-white                ">
           Learn More about QKash Services
         </h2>
 

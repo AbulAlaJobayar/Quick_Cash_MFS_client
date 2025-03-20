@@ -11,7 +11,7 @@ const AuthButton = () => {
     <>
       <button
         onClick={handleLogout}
-        className="flex items-center w-full p-2 hover:bg-pink-700 rounded-lg"
+        className="flex items-center w-full p-2 hover:border cursor-pointer rounded-lg"
       >
         <LogOut className="h-4 w-4 mr-2" />
         Logout

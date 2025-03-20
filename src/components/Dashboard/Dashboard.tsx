@@ -130,7 +130,7 @@ const Dashboard = () => {
               <CardTitle>Recent Cashouts</CardTitle>
             </CardHeader>
             <CardContent>
-              <Table>
+              {/* <Table>
                 <TableCaption>A list of recent cashouts.</TableCaption>
                 <TableHeader>
                   <TableRow>
@@ -149,7 +149,7 @@ const Dashboard = () => {
                       </TableRow>
                     ))}
                 </TableBody>
-              </Table>
+              </Table> */}
             </CardContent>
           </Card>
         </motion.div>
