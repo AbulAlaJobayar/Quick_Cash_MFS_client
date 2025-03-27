@@ -23,10 +23,19 @@ const transactionApi = baseApi.injectEndpoints({
       }),
       providesTags: [tagType.transaction],
     }),
+    cashOut: build.mutation({
+      query: (payload) => ({
+          url: "/transaction/cash_out",
+          method: "POST",
+          data: payload,
+      }),
+      invalidatesTags: [tagType.transaction,tagType.notification],
+    }),
   }),
 });
 export const {
   useTodayTransactionQuery,
   useMyTransactionQuery,
   useMonthlyTransactionQuery,
+  useCashOutMutation
 } = transactionApi;

@@ -25,7 +25,7 @@ const DashboardDrawer = ({ children }: { children: ReactNode }) => {
              
             </div>
           </header>
-          <div className="m-8">{children}</div>
+          <div className=" m-2 ">{children}</div>
         </SidebarInset>
       </div>
     </SidebarProvider>

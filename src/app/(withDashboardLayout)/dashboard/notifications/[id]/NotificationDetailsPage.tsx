@@ -14,23 +14,41 @@ import { useNotificationDetailsQuery } from "@/redux/api/notification";
 import { Button } from "@/components/ui/button";
 import NotificationPdf from "@/components/NotificationPdf";
 
-
 const NotificationDetailsPage = ({ id }: { id: string }) => {
   const { data, isLoading } = useNotificationDetailsQuery({ id });
 
   if (isLoading) {
     return <LoadingSpinner />;
   }
-
+  const pdfFileName = `QKS_${data?.data?.transaction?.type}_${data?.data?.notification?.userId?.name.replace(/\s+/g, '_')}_${data?.data?.notification?.transactionId}.pdf`;
   return (
     <div>
       <div className="mb-4">
         <PDFDownloadLink
-          document={<NotificationPdf data={data.data} />}
-          fileName="notification-details.pdf"
+          document={
+            <NotificationPdf
+              data={data.data}
+              company={{
+                name: "QKash Mobile Banking.",
+                address: "121/2 Gazi Tower ",
+                city: "Khulna",
+                country: "Bangladesh",
+                phone: "+8801928210545 (whatsApp)",
+                email: "abulalajobayar@gmail.com",
+                website: "portfolio-rose-theta-63.vercel.app",
+              }}
+              qrCodeUrl={`https://api.qrserver.com/v1/create-qr-code/?
+                size=150x150&
+                data=${encodeURIComponent(`https://qks.com/verify/${data?.notification?.transactionId}`)}&
+                margin=10&
+                format=png&
+                color=ec4899`}
+            />
+          }
+          fileName={pdfFileName}
         >
           {({ loading }) => (
-            <Button disabled={loading}>
+            <Button disabled={loading} className="cursor-pointer">
               {loading ? "Generating PDF..." : "Download PDF"}
             </Button>
           )}
