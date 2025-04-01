@@ -10,14 +10,29 @@ const requestBalance = baseApi.injectEndpoints({
       }),
       invalidatesTags:[tagType.requestBalance]
     }),
-    userUpdate: build.mutation({
+    MyBalanceRequest: build.query({
+      query: () => ({
+        url: "/balanceRequest/my_balance_request",
+        method: "GET",
+      }),
+     providesTags:[tagType.requestBalance]
+    }),
+    totalRequest: build.query({
+      query: () => ({
+        url: "/balanceRequest/total_request",
+        method: "GET",
+      }),
+     providesTags:[tagType.requestBalance]
+    }),
+    approvedRequest: build.mutation({
       query: (data) => ({
-        url: "/users/user_update",
+        url: "/balanceRequest/approved_request",
         method: "PUT",
         data
       }),
-      invalidatesTags:[tagType.auth,tagType.notification]
+     invalidatesTags:[tagType.requestBalance,tagType.notification]
     }),
+
   }),
 });
-export const {useCreateBalanceMutation } =requestBalance;
+export const {useCreateBalanceMutation,useMyBalanceRequestQuery,useTotalRequestQuery,useApprovedRequestMutation } =requestBalance;

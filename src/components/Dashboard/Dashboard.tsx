@@ -27,8 +27,9 @@ import {
   // useMyTransactionQuery,
   useTodayTransactionQuery,
 } from "@/redux/api/transactionApi";
-import LoadingSpinner from "../shared/LoadingSpinner";
+// import LoadingSpinner from "../shared/LoadingSpinner";
 import { getUserInfo } from "@/service/action/authServices";
+import LoadingCard from "../shared/LoadingCard";
 // Animation variants for Framer Motion
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -60,7 +61,7 @@ const Dashboard = () => {
     transactionLoading ||
     monthlyLoading
   ) {
-    return <LoadingSpinner />;
+    return <LoadingCard/>;
   }
   // Current Balance
   return (

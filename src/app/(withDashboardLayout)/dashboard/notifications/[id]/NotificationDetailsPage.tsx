@@ -1,7 +1,6 @@
 "use client";
 
 import { PDFDownloadLink } from "@react-pdf/renderer";
-import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import {
   Table,
   TableBody,
@@ -13,12 +12,13 @@ import {
 import { useNotificationDetailsQuery } from "@/redux/api/notification";
 import { Button } from "@/components/ui/button";
 import NotificationPdf from "@/components/NotificationPdf";
+import LoadingCard from "@/components/shared/LoadingCard";
 
 const NotificationDetailsPage = ({ id }: { id: string }) => {
   const { data, isLoading } = useNotificationDetailsQuery({ id });
 
   if (isLoading) {
-    return <LoadingSpinner />;
+    return <LoadingCard />;
   }
 
   if (!data?.data) {

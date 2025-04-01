@@ -1,7 +1,7 @@
 import { User_Role } from "@/constant/role";
 import { DrawerItem } from "./../types/index";
 import { userRole } from "@/types";
-import { LayoutDashboardIcon, BadgePlus, CreditCard, Send, Repeat, User } from "lucide-react";
+import { LayoutDashboardIcon, BadgePlus, CreditCard, Send, Repeat, User, ClipboardList, BadgeCheck } from "lucide-react";
 
 export const drawerItem = (role: userRole): DrawerItem[] => {
   const roleMenus: DrawerItem[] = [];
@@ -10,11 +10,6 @@ export const drawerItem = (role: userRole): DrawerItem[] => {
       title: "Dashboard",
       path: `/dashboard`,
       icon: LayoutDashboardIcon,
-    },
-    {
-      title: "Cash out",
-      path: "/dashboard/cashOut",
-      icon: CreditCard,
     },
     {
       title: "Send Money",
@@ -34,31 +29,47 @@ export const drawerItem = (role: userRole): DrawerItem[] => {
   ]
   switch (role) {
     case User_Role.admin:
-      roleMenus.push({
-        title: "Dashboard",
-        path: "/dashboard",
-        icon: LayoutDashboardIcon,
-        child: [
-          {
-            title: "Agent Management",
-            path: `${role}/agent`,
-          },
-        ],
-      });
+      roleMenus.push(
+        {
+          title: "Cash In",
+          path: "/dashboard/cashIn",
+          icon: CreditCard,
+        },
+        {
+          title: "Balance Requests",
+          path: "/dashboard/approvedRequests",
+          icon: BadgeCheck
+        }
+     );
       break;
     case User_Role.agent:
       roleMenus.push(
+        {
+          title: "Cash In",
+          path: "/dashboard/cashIn",
+          icon: CreditCard,
+        },
+
         {
           title: "Request Balance",
           path: "/dashboard/requestBalance",
           icon: BadgePlus,
         },
+        {
+          title: "Total Request",
+          path: "/dashboard/totalRequestBalance",
+          icon: ClipboardList,
+        }
         
       );
       break;
     case User_Role.user:
       roleMenus.push(
-       
+        {
+          title: "Cash Out",
+          path: "/dashboard/cashOut",
+          icon: CreditCard,
+        },
       );
       break;
     default:
