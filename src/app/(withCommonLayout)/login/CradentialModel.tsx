@@ -21,14 +21,14 @@ const credentials: CredentialItem[] = [
   {
     title: "Agent",
     items: [
-        { label: "Mobile", value: "+8801928210545" },
+        { label: "Mobile", value: "+8801928210546" },
         { label: "Pin", value: "12345" },
     ],
   },
   {
     title: "User",
     items: [
-        { label: "Mobile", value: "+8801928210545" },
+        { label: "Mobile", value: "+8801928210547" },
         { label: "Pin", value: "12345" },
     ],
   },

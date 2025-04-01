@@ -38,7 +38,7 @@ const QKSInput = ({
           {label && (
             <label
               htmlFor={id || name}
-              className="block text-sm font-medium text-gray-700 dark:text-white"
+              className="block text-sm font-medium text-gray-700 dark:text-white mt-4"
             >
               <div className="flex gap-2">
                 <span className=" flex items-center gap-2 dark:text-white">
@@ -49,7 +49,7 @@ const QKSInput = ({
             </label>
           )}
           <motion.div 
-            whileTap={{ scale: 0.9, boxShadow: "0px 5px 10px rgba(255, 0, 150, 0.5)" }}
+            whileTap={{ scale: 0.98, boxShadow: "0px 5px 10px rgba(255, 0, 150, 0.5)" }}
             transition={{ type: "spring", stiffness: 100 }}
           >
           

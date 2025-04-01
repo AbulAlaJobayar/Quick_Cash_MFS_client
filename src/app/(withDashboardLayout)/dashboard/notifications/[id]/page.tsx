@@ -1,10 +1,12 @@
 import NotificationDetailsPage from "./NotificationDetailsPage";
 
 
-const NotificationDetails = async ({ params }: { params: { id: string } }) => {
+const NotificationDetails = async ({params}:{params:Promise<{id:string}>}) => {
+  const data= await params;
+  const {id}=data;
   return (
     <div>
-      <NotificationDetailsPage id={params?.id} />
+      <NotificationDetailsPage id={id} />
     </div>
   );
 };

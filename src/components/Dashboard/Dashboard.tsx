@@ -1,15 +1,15 @@
 "use client";
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+// import {
+//   Table,
+//   TableBody,
+//   TableCaption,
+//   TableCell,
+//   TableHead,
+//   TableHeader,
+//   TableRow,
+// } from "@/components/ui/table";
 import {
   BarChart,
   Bar,
@@ -24,10 +24,11 @@ import { useGetMeQuery } from "@/redux/api/authApi";
 
 import {
   useMonthlyTransactionQuery,
-  useMyTransactionQuery,
+  // useMyTransactionQuery,
   useTodayTransactionQuery,
 } from "@/redux/api/transactionApi";
 import LoadingSpinner from "../shared/LoadingSpinner";
+import { getUserInfo } from "@/service/action/authServices";
 // Animation variants for Framer Motion
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -45,23 +46,23 @@ const itemVariants = {
 };
 
 const Dashboard = () => {
+  const user= getUserInfo()
   const { data: me, isLoading: userLoading } = useGetMeQuery("");
   const { data: todayTransaction, isLoading: transactionLoading } =
     useTodayTransactionQuery("");
-  const { data: recentCashouts, isLoading: myTransactionLoading } =
-    useMyTransactionQuery("");
+  // const { data: recentCashouts, isLoading: myTransactionLoading } =
+    // useMyTransactionQuery("");
 
   const { data: monthly, isLoading: monthlyLoading } =
     useMonthlyTransactionQuery("");
   if (
     userLoading ||
     transactionLoading ||
-    myTransactionLoading ||
     monthlyLoading
   ) {
     return <LoadingSpinner />;
   }
-
+  // Current Balance
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="visible">
       {/* Grid for the top 4 cards */}
@@ -69,16 +70,15 @@ const Dashboard = () => {
         {[
           {
             title: "Current Balance",
-            value: me?.data.balance ? me?.data.balance : 0,
+            value: me?.data.balance ? me?.data.balance.toFixed(2) : 0,
           },
           {
-            title: "Today's Cash Out",
-            value: todayTransaction?.data?.cashout
-              ? todayTransaction?.data?.cashout
-              : 0,
+            title: `${user.role==="user"?"Cash Out":" Fee"}`,
+            value:user.role==="user"? todayTransaction?.data?.cashout
+              : todayTransaction?.data?.fee ||0
           },
           {
-            title: "Today's Cash In",
+            title: "Cash In",
             value: todayTransaction?.data?.cashin
               ? todayTransaction?.data?.cashin
               : 0,
@@ -93,10 +93,10 @@ const Dashboard = () => {
           <motion.div key={index} variants={itemVariants}>
             <Card>
               <CardHeader>
-                <CardTitle>{card.title}</CardTitle>
+                <CardTitle>{card?.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold"> &#x9F3; {card.value}</p>
+                <p className="text-2xl font-bold"> &#x9F3; {card?.value}</p>
               </CardContent>
             </Card>
           </motion.div>

@@ -12,49 +12,43 @@ import parsePhoneNumberFromString from "libphonenumber-js";
 import { useState } from "react";
 import { toast } from "sonner";
 import QKSModel from "@/components/shared/Model/QKSModel";
-import { useCashOutMutation } from "@/redux/api/transactionApi";
+import {useSendMoneyMutation } from "@/redux/api/transactionApi";
+
 
 // Validation Schemas
-const mobileNumber = z
-  .string({
-    required_error: "Must provide recipient Mobile number",
-    invalid_type_error: "Mobile number must be a string",
-  })
-  .refine(
-    (value) => {
-      const mobile = parsePhoneNumberFromString(value);
-      return mobile?.isValid() || false;
-    },
-    {
-      message:
-        "Invalid phone number. Please enter a valid phone number with country code.",
-    }
-  );
+const mobileNumber = z.string({
+  required_error: "Must provide recipient Mobile number",
+  invalid_type_error: "Mobile number must be a string"
+}).refine(
+  (value) => {
+    const mobile = parsePhoneNumberFromString(value);
+    return mobile?.isValid() || false;
+  },
+  {
+    message: "Invalid phone number. Please enter a valid phone number with country code.",
+  }
+);
 
 const formSchema = z.object({
   mobileNumber: mobileNumber,
-  amount: z.coerce
-    .number({
-      required_error: "Amount is required",
-      invalid_type_error: "Amount must be a number",
-    })
-    .positive("Amount must be positive"),
+  amount: z.coerce.number({
+    required_error: "Amount is required",
+    invalid_type_error: "Amount must be a number"
+  }).positive("Amount must be positive"),
 });
 
 const pinSchema = z.object({
-  pin: z
-    .string({
-      required_error: "PIN is required",
-      invalid_type_error: "PIN must be a string",
-    })
-    .min(4, "PIN must be 4 digits"),
+  pin: z.string({
+    required_error: "PIN is required",
+    invalid_type_error: "PIN must be a string"
+  }).min(4, "PIN must be 4 digits"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 type PinValues = z.infer<typeof pinSchema>;
 
-const CashOutPage = () => {
-  const [cashOut] = useCashOutMutation();
+const SendMoney = () => {
+  const [sendMoney] = useSendMoneyMutation()
   const [confirmationData, setConfirmationData] = useState<FormValues | null>(
     null
   );
@@ -67,18 +61,18 @@ const CashOutPage = () => {
 
   const handleCashOut = async (pinData: PinValues) => {
     if (!confirmationData) return;
-
+  
     try {
       const payload = {
         mobileNumber: confirmationData.mobileNumber,
         amount: confirmationData.amount,
         pin: pinData.pin,
       };
-
+  
       console.log("Sending payload:", payload); // Debug log
-
-      const result = await cashOut(payload).unwrap();
-
+  
+      const result = await sendMoney(payload).unwrap();
+      
       if (result.success) {
         toast.success("Cash out Successful", {
           description: `৳${confirmationData.amount} sent to ${confirmationData.mobileNumber}`,
@@ -91,20 +85,19 @@ const CashOutPage = () => {
       }
     } catch (error: any) {
       console.error("Cash out error:", error); // Debug log
-
+      
       // Handle Zod validation errors specifically
-      if (error?.data?.err?.name === "ZodError") {
-        const errorMessages = error.data.errorSources
-          .map((err: any) => `${err.path}: ${err.message}`)
-          .join("\n");
-
+      if (error?.data?.err?.name === 'ZodError') {
+        const errorMessages = error.data.errorSources.map((err: any) => 
+          `${err.path}: ${err.message}`
+        ).join('\n');
+        
         toast.error("Validation Error", {
           description: errorMessages,
         });
       } else {
         toast.error("Cash out failed", {
-          description:
-            error.data?.message || "An error occurred during transaction",
+          description: error.data?.message || "An error occurred during transaction",
         });
       }
     }
@@ -127,10 +120,9 @@ const CashOutPage = () => {
         variants={containerVariants}
       >
         {/* Hero content remains the same */}
-        <motion.h1 className="text-2xl font-bold mb-2 pt-2">Cash Out</motion.h1>
+        <motion.h1 className="text-2xl font-bold mb-2 pt-2">Send Money</motion.h1>
         <motion.p className="text-lg mb-4">
-          Need to withdraw your funds? Cash out quickly to your bank account or
-          other preferred payment methods.
+        Quickly and securely send money to anyone, anywhere. Transfer funds in just a few clicks with our easy-to-use service.
         </motion.p>
       </motion.section>
 
@@ -139,7 +131,7 @@ const CashOutPage = () => {
           <QKSInput
             type="text"
             name="mobileNumber"
-            label="Agent Number"
+            label="Number"
             required
             placeholder="+8801234567891"
             className="w-full my-4 border-pink-900 drop-shadow-xs shadow-pink-700"
@@ -195,15 +187,12 @@ const CashOutPage = () => {
                 label="Enter Your PIN"
                 required
                 className="w-full border-pink-900"
-                // disabled={isLoading}
-                // autoComplete="off"
               />
               <Button
                 type="submit"
                 className="w-full bg-pink-700 hover:bg-pink-800 mt-5"
-                // disabled={isLoading}
               >
-                Cash Out
+                Send Money
               </Button>
             </QKSFrom>
           </div>
@@ -213,4 +202,4 @@ const CashOutPage = () => {
   );
 };
 
-export default CashOutPage;
+export default SendMoney;

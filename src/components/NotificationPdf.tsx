@@ -30,7 +30,6 @@ const styles = StyleSheet.create({
   companyInfo: {
     fontSize: 12,
     marginBottom: 2,
-    fontWeight: 'semi-bold',
   },
   section: {
     marginBottom: 15,

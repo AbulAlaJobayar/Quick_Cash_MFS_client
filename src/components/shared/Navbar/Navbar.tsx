@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { Moon, Sun, Menu, X, LayoutDashboard } from "lucide-react";
+import { Moon, Sun, Menu, X, LayoutDashboard, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -10,8 +10,10 @@ import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import AuthButton from "./AuthButton";
 import { isLoggedIn } from "@/service/action/authServices";
+import { useGetMeQuery } from "@/redux/api/authApi";
 
 export default function Navbar() {
+
   const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -19,6 +21,7 @@ export default function Navbar() {
   const pathName = usePathname();
   const userLoggedIn = isLoggedIn(); // Check if user is logged in
   // Handle scroll event
+  const {data,isLoading}=useGetMeQuery('')
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 0) {
@@ -105,12 +108,14 @@ export default function Navbar() {
             <div className="hidden md:block relative">
               <Avatar onClick={toggleDropdown}>
                 
-                  <AvatarImage
-                    src="https://github.com/shadcn.png"
-                    alt="@shadcn"
-                  />
-               
-                <AvatarFallback>CN</AvatarFallback>
+              <AvatarImage src={data?.data?.img} alt="@shadcn" />
+        <AvatarFallback className="bg-gray-100 dark:bg-gray-800">
+          {isLoading ? (
+            <Loader2 className="h-6 w-6 animate-spin" />
+          ) : (
+            <span className="text-lg">👤</span>
+          )}
+        </AvatarFallback>
               </Avatar>
 
               {/* Dropdown Menu */}

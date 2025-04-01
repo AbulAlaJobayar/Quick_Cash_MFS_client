@@ -20,7 +20,23 @@ const NotificationDetailsPage = ({ id }: { id: string }) => {
   if (isLoading) {
     return <LoadingSpinner />;
   }
-  const pdfFileName = `QKS_${data?.data?.transaction?.type}_${data?.data?.notification?.userId?.name.replace(/\s+/g, '_')}_${data?.data?.notification?.transactionId}.pdf`;
+
+  if (!data?.data) {
+    return <p>No data available.</p>;
+  }
+
+  const { notification, transaction } = data.data;
+
+  const userName = notification?.userId?.name?.replace(/\s+/g, "_") || "Unknown";
+  const transactionId = notification?.transactionId || "Unknown";
+  const transactionType = transaction?.type || "Unknown";
+
+  const pdfFileName = `QKS_${transactionType}_${userName}_${transactionId}.pdf`;
+
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
+    `https://qks.com/verify/${transactionId}`
+  )}&margin=10&format=png&color=ec4899`;
+
   return (
     <div>
       <div className="mb-4">
@@ -30,19 +46,14 @@ const NotificationDetailsPage = ({ id }: { id: string }) => {
               data={data.data}
               company={{
                 name: "QKash Mobile Banking.",
-                address: "121/2 Gazi Tower ",
+                address: "121/2 Gazi Tower",
                 city: "Khulna",
                 country: "Bangladesh",
-                phone: "+8801928210545 (whatsApp)",
+                phone: "+8801928210545 (WhatsApp)",
                 email: "abulalajobayar@gmail.com",
                 website: "portfolio-rose-theta-63.vercel.app",
               }}
-              qrCodeUrl={`https://api.qrserver.com/v1/create-qr-code/?
-                size=150x150&
-                data=${encodeURIComponent(`https://qks.com/verify/${data?.notification?.transactionId}`)}&
-                margin=10&
-                format=png&
-                color=ec4899`}
+              qrCodeUrl={qrCodeUrl}
             />
           }
           fileName={pdfFileName}
@@ -65,27 +76,27 @@ const NotificationDetailsPage = ({ id }: { id: string }) => {
         <TableBody>
           <TableRow>
             <TableCell className="font-medium">User Name</TableCell>
-            <TableCell>{data?.data?.notification?.userId?.name}</TableCell>
+            <TableCell>{notification?.userId?.name || "N/A"}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell className="font-medium">User Email</TableCell>
-            <TableCell>{data?.data?.notification?.userId?.email}</TableCell>
+            <TableCell>{notification?.userId?.email || "N/A"}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell className="font-medium">Transaction ID</TableCell>
-            <TableCell>{data?.data?.notification?.transactionId}</TableCell>
+            <TableCell>{transactionId}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell className="font-medium">Message</TableCell>
-            <TableCell>{data?.data?.notification?.message}</TableCell>
+            <TableCell>{notification?.message || "N/A"}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell className="font-medium">Transaction Amount</TableCell>
-            <TableCell>{data?.data?.transaction?.amount}</TableCell>
+            <TableCell>{transaction?.amount?.toFixed(2) || "N/A"}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell className="font-medium">Transaction Type</TableCell>
-            <TableCell>{data?.data?.transaction?.type}</TableCell>
+            <TableCell>{transactionType}</TableCell>
           </TableRow>
         </TableBody>
       </Table>

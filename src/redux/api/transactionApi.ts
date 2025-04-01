@@ -31,11 +31,20 @@ const transactionApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [tagType.transaction,tagType.notification],
     }),
+    sendMoney: build.mutation({
+      query: (payload) => ({
+          url: "/transaction/send_money",
+          method: "POST",
+          data: payload,
+      }),
+      invalidatesTags: [tagType.transaction,tagType.notification],
+    }),
   }),
 });
 export const {
   useTodayTransactionQuery,
   useMyTransactionQuery,
   useMonthlyTransactionQuery,
-  useCashOutMutation
+  useCashOutMutation,
+  useSendMoneyMutation
 } = transactionApi;
