@@ -19,7 +19,6 @@ export const Notification = () => {
   if (isLoading) {
     return <Skeleton className="w-6 h-6 rounded-full" />;
   }
-  console.log("from notification", data?.data);
   if (isError) {
     return <div>Error loading notifications</div>;
   }
@@ -41,7 +40,7 @@ export const Notification = () => {
         <div className="relative">
           <Bell className="w-6 h-6 text-gray-700" />
           {data?.data?.length > 0 && (
-            <Badge className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+            <Badge className="absolute -top-2 right-3 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
               {data?.data?.length}
             </Badge>
           )}

@@ -219,7 +219,7 @@ const LoginPage = () => {
         </div>
 
         {/* Image Section */}
-        <div className="hidden md:flex w-full md:w-1/2 bg-gradient-to-br from-pink-500 to-pink-700 items-center justify-center p-8">
+        <div className="hidden md:flex w-full md:w-1/2  items-center justify-center p-8">
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -229,13 +229,13 @@ const LoginPage = () => {
             <Image
               alt="Login illustration"
               src={loginImage}
-              width={400}
-              height={400}
+              width={300}
+              height={300}
               className="object-contain"
               priority
             />
-            <div className="mt-6 text-center text-white">
-              <h2 className="text-2xl font-bold">QuickKart System</h2>
+            <div className="mt-6 text-center text-black">
+              <h2 className="text-2xl font-bold">QuickCash System</h2>
               <p className="mt-2 opacity-80">
                 Your one-stop solution for all your needs
               </p>

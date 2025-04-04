@@ -1,15 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import AuthButton from "../shared/Navbar/AuthButton";
-import { useGetMeQuery } from "@/redux/api/authApi";
+
 import { Loader2 } from "lucide-react";
 
 
 
 
-const NavUser = () => {
+const NavUser = ({data,isLoading}:{data:any,isLoading:any}) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
 
@@ -17,9 +18,8 @@ const NavUser = () => {
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
-const {data,isLoading}=useGetMeQuery('')
 
-console.log(data,"navivbar icon image")
+
   
 
   return (

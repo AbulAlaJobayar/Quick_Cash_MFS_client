@@ -33,7 +33,7 @@ interface BalanceRequest {
   status: 'pending' | 'approved' | 'rejected';
   transactionId: string;
   createdAt: string;
-  processedAt?: string;
+  updatedAt?: string;
   adminId?: {
     name: string;
   };
@@ -114,8 +114,9 @@ const BalanceRequestTable = () => {
       header: "Processed Date",
       cell: ({ row }) => {
         if (!isClient) return "Loading...";
-        return row.original.processedAt 
-          ? new Date(row.original.processedAt).toLocaleDateString() 
+        return row.original.updatedAt
+ 
+          ? new Date(row.original.updatedAt).toLocaleDateString() 
           : "N/A";
       }
     },

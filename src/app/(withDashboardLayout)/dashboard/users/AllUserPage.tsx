@@ -31,135 +31,120 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
-  Clock,
-  CheckCircle2,
-  XCircle,
   User,
   Shield,
+  UserCog,
   Wallet,
   MoreVertical,
   ChevronDown,
   ChevronUp,
   Search,
   Filter,
-  Download,
+  Trash2,
+  UserCheck,
+  UserX,
+  Ban,
+  CheckCircle2,
 } from "lucide-react";
-import {
-  useApprovedRequestMutation,
-  useTotalRequestQuery,
-} from "@/redux/api/balanceRequest";
-import LoadingCard from "@/components/shared/LoadingCard";
-import { format } from "date-fns";
-import { DateRange } from "react-day-picker";
-import { DateRangePicker } from "@/components/ApprovedRequest/DateRangePicker";
-import { ExportToCSV } from "@/components/ApprovedRequest/ExportToCSV";
-import { toast } from "sonner";
 
-interface Agent {
+import LoadingCard from "@/components/shared/LoadingCard";
+import { toast } from "sonner";
+import Image from "next/image";
+import { useAllUsersQuery, useDeleteAgentMutation } from "@/redux/api/userApi";
+
+interface User {
   _id: string;
   name: string;
   mobileNumber: string;
+  email: string;
   accountType: "user" | "agent" | "admin";
+  nid: string;
+  balance: number;
+  bonus: number;
+  img?: string;
   status: "blocked" | "approved";
-}
-
-interface Admin {
-  _id: string;
-  name: string;
-}
-
-interface BalanceRequest {
-  _id: string;
-  agentId: Agent;
-  amount: number;
-  status: "pending" | "approved" | "rejected";
-  transactionId: string;
+  sessionId: string;
   createdAt: string;
-  processedAt?: string;
-  adminId?: Admin;
-  userId?: {
-    _id: string;
-    name: string;
-    storeName: string;
-    storeLocation: string;
-  };
 }
 
-const statusOptions = [
-  { value: "pending", label: "Pending" },
-  { value: "approved", label: "Approved" },
-  { value: "rejected", label: "Rejected" },
+const accountTypeOptions = [
+  { value: "user", label: "User" },
+  { value: "agent", label: "Agent" },
+  { value: "admin", label: "Admin" },
 ];
 
-const BalanceRequestTable = () => {
+const statusOptions = [
+  { value: "approved", label: "Approved" },
+  { value: "blocked", label: "Blocked" },
+];
+
+const UsersTable = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [accountTypeFilter, setAccountTypeFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  const { data, isLoading, isError, refetch } = useTotalRequestQuery("");
-  const [updateRequestStatus] = useApprovedRequestMutation();
+  const { data, isLoading, isError, refetch } = useAllUsersQuery("");
+  const [updateUserStatus] = useDeleteAgentMutation();
 
   const handleStatusUpdate = async (
     id: string,
-    status: "approved" | "rejected"
+    status: "blocked" | "approved"
   ) => {
     try {
-      const res = await updateRequestStatus({ id, status }).unwrap();
+      const res = await updateUserStatus({ id, status }).unwrap();
       if (res?.success) {
-        toast.success(
-          res?.data?.message || "balance requested updated successfully"
-        );
+        toast.success(res?.message || "User status updated successfully");
       }
-    } catch (error:any) {
-      toast.error(error.message);
+      else {
+        toast.error(res?.message || "Failed to update user status");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Failed to update user status");
     }
   };
 
   const filteredData = useMemo(() => {
     if (!data?.data) return [];
 
-    return data.data.filter((request: any) => {
-      // Date filter
-      const requestDate = new Date(request.createdAt);
-      const dateFilterPassed =
-        !dateRange ||
-        ((!dateRange.from || requestDate >= dateRange.from) &&
-          (!dateRange.to || requestDate <= dateRange.to));
+    return data.data.filter((user: User) => {
+      // Account type filter
+      const accountTypeFilterPassed =
+        accountTypeFilter === "all" || user.accountType === accountTypeFilter;
 
       // Status filter
       const statusFilterPassed =
-        statusFilter === "all" || request.status === statusFilter;
+        statusFilter === "all" || user.status === statusFilter;
 
-      return dateFilterPassed && statusFilterPassed;
+      return accountTypeFilterPassed && statusFilterPassed;
     });
-  }, [data?.data, dateRange, statusFilter]);
+  }, [data?.data, accountTypeFilter, statusFilter]);
 
-  const columns: ColumnDef<BalanceRequest>[] = [
+  const columns: ColumnDef<User>[] = [
     {
-      accessorKey: "requestFrom",
-      header: "Request From",
+      accessorKey: "userInfo",
+      header: "User Info",
       cell: ({ row }) => {
-        const request = row.original;
-        const isAgent = request.agentId?.accountType === "agent";
-        const requesterName = isAgent
-          ? request.agentId?.name
-          : request.userId?.name;
-        const contactInfo = isAgent
-          ? request.agentId?.mobileNumber
-          : `${request.userId?.storeName} (${request.userId?.storeLocation})`;
-
+        const user = row.original;
         return (
           <div className="flex items-center min-w-[200px]">
-            {isAgent ? (
-              <Shield className="h-4 w-4 mr-2 text-blue-500" />
+            {user.img ? (
+              <Image
+                src={user.img}
+                alt={user.name}
+                width={40}
+                height={40}
+                className="rounded-full mr-3"
+              />
             ) : (
-              <User className="h-4 w-4 mr-2 text-green-500" />
+              <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mr-3">
+                <User className="h-5 w-5 text-gray-500" />
+              </div>
             )}
             <div className="overflow-hidden">
-              <p className="font-medium truncate">{requesterName}</p>
+              <p className="font-medium truncate">{user.name}</p>
               <p className="text-sm text-muted-foreground truncate">
-                {isAgent ? "Agent" : "User"} • {contactInfo}
+                {user.mobileNumber} • {user.email}
               </p>
             </div>
           </div>
@@ -167,14 +152,48 @@ const BalanceRequestTable = () => {
       },
     },
     {
-      accessorKey: "amount",
+      accessorKey: "accountType",
+      header: "Account Type",
+      cell: ({ row }) => {
+        const accountType = row.original.accountType;
+        const iconMap = {
+          user: <User className="h-4 w-4 mr-2 text-blue-500" />,
+          agent: <Shield className="h-4 w-4 mr-2 text-green-500" />,
+          admin: <UserCog className="h-4 w-4 mr-2 text-purple-500" />,
+        };
+
+        const variantMap: Record<
+          "user" | "agent" | "admin",
+          "secondary" | "default" | "outline"
+        > = {
+          user: "secondary",
+          agent: "default",
+          admin: "outline",
+        };
+
+        return (
+          <Badge
+            variant={variantMap[accountType]}
+            className="flex items-center"
+          >
+            {iconMap[accountType]}
+            {accountType.charAt(0).toUpperCase() + accountType.slice(1)}
+          </Badge>
+        );
+      },
+      filterFn: (row, id, value) => {
+        return value.includes(row.getValue(id));
+      },
+    },
+    {
+      accessorKey: "balance",
       header: ({ column }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="px-0"
         >
-          Amount
+          Balance
           {column.getIsSorted() === "asc" ? (
             <ChevronUp className="ml-2 h-4 w-4" />
           ) : column.getIsSorted() === "desc" ? (
@@ -188,7 +207,7 @@ const BalanceRequestTable = () => {
         <div className="flex items-center">
           <Wallet className="h-4 w-4 mr-2 text-purple-500" />
           <span className="font-medium">
-            {row.original.amount.toLocaleString("en-US", {
+            {row.original.balance.toLocaleString("en-US", {
               style: "currency",
               currency: "USD",
               minimumFractionDigits: 2,
@@ -199,23 +218,35 @@ const BalanceRequestTable = () => {
       ),
     },
     {
+      accessorKey: "bonus",
+      header: "Bonus",
+      cell: ({ row }) => (
+        <div className="font-medium">
+          {row.original.bonus.toLocaleString("en-US", {
+            style: "currency",
+            currency: "USD",
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </div>
+      ),
+    },
+    {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
         const status = row.original.status;
         const iconMap = {
-          pending: <Clock className="h-4 w-4 mr-1" />,
           approved: <CheckCircle2 className="h-4 w-4 mr-1 text-green-500" />,
-          rejected: <XCircle className="h-4 w-4 mr-1 text-red-500" />,
+          blocked: <Ban className="h-4 w-4 mr-1 text-red-500" />,
         };
 
         const variantMap: Record<
-          "pending" | "approved" | "rejected",
-          "secondary" | "default" | "destructive"
+          "approved" | "blocked",
+          "default" | "destructive"
         > = {
-          pending: "secondary",
           approved: "default",
-          rejected: "destructive",
+          blocked: "destructive",
         };
 
         return (
@@ -230,57 +261,23 @@ const BalanceRequestTable = () => {
       },
     },
     {
-      accessorKey: "transactionId",
-      header: "Transaction ID",
+      accessorKey: "createdAt",
+      header: "Joined",
       cell: ({ row }) => (
-        <div className="font-mono text-sm text-ellipsis overflow-hidden">
-          {row.original.transactionId || "N/A"}
+        <div className="text-sm">
+          {new Date(row.original.createdAt).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })}
         </div>
       ),
-    },
-    {
-      accessorKey: "adminId.name",
-      header: "Processed By",
-      cell: ({ row }) => (
-        <div className="text-ellipsis overflow-hidden">
-          {row.original.adminId?.name || "Pending"}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "dates",
-      header: "Timeline",
-      cell: ({ row }) => {
-        const request = row.original;
-        return (
-          <div className="text-sm space-y-1 min-w-[180px]">
-            <div className="flex items-center">
-              <span className="text-muted-foreground mr-2">Request:</span>
-              <span>
-                {format(new Date(request.createdAt), "MMM dd, yyyy HH:mm")}
-              </span>
-            </div>
-            {request.processedAt && (
-              <div className="flex items-center">
-                <span className="text-muted-foreground mr-2">Processed:</span>
-                <span>
-                  {format(new Date(request.processedAt), "MMM dd, yyyy HH:mm")}
-                </span>
-              </div>
-            )}
-          </div>
-        );
-      },
     },
     {
       id: "actions",
-      header: "",
+      header: "Actions",
       cell: ({ row }) => {
-        const request = row.original;
-
-        if (request.status !== "pending") {
-          return null;
-        }
+        const user = row.original;
 
         return (
           <DropdownMenu>
@@ -291,20 +288,26 @@ const BalanceRequestTable = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem
-                className="text-green-600 focus:text-green-600 focus:bg-green-50"
-                onClick={() => handleStatusUpdate(request._id, "approved")}
-              >
-                <CheckCircle2 className="mr-2 h-4 w-4" />
-                Approve
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-red-600 focus:text-red-600 focus:bg-red-50"
-                onClick={() => handleStatusUpdate(request._id, "rejected")}
-          
-            >
-                <XCircle className="mr-2 h-4 w-4" />
-                Reject
+              {user.status === "approved" ? (
+                <DropdownMenuItem
+                  className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                  onClick={() => handleStatusUpdate(user._id, "blocked")}
+                >
+                  <UserX className="mr-2 h-4 w-4" />
+                  Block
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem
+                  className="text-green-600 focus:text-green-600 focus:bg-green-50"
+                  onClick={() => handleStatusUpdate(user._id, "approved")}
+                >
+                  <UserCheck className="mr-2 h-4 w-4" />
+                  Unblock
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuItem className="text-red-600 focus:text-red-600 focus:bg-red-50">
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -339,7 +342,7 @@ const BalanceRequestTable = () => {
           <div className="text-center">
             <h2 className="text-xl font-semibold mb-2">Error loading data</h2>
             <p className="text-muted-foreground">
-              Failed to fetch balance requests. Please try again later.
+              Failed to fetch users. Please try again later.
             </p>
             <Button
               variant="outline"
@@ -357,25 +360,49 @@ const BalanceRequestTable = () => {
   return (
     <div className="container mx-auto py-8 space-y-4">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <h1 className="text-2xl font-bold">Balance Requests</h1>
+        <h1 className="text-2xl font-bold">User Management</h1>
 
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search requests..."
+              placeholder="Search users..."
               className="pl-9 w-full sm:w-[200px] lg:w-[300px]"
               value={
-                (table.getColumn("requestFrom")?.getFilterValue() as string) ??
-                ""
+                (table.getColumn("userInfo")?.getFilterValue() as string) ?? ""
               }
               onChange={(event) =>
-                table
-                  .getColumn("requestFrom")
-                  ?.setFilterValue(event.target.value)
+                table.getColumn("userInfo")?.setFilterValue(event.target.value)
               }
             />
           </div>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="pl-3">
+                <Filter className="h-4 w-4 mr-2" />
+                Account Type:{" "}
+                {accountTypeFilter === "all"
+                  ? "All"
+                  : accountTypeOptions.find(
+                      (s) => s.value === accountTypeFilter
+                    )?.label}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setAccountTypeFilter("all")}>
+                All
+              </DropdownMenuItem>
+              {accountTypeOptions.map((option) => (
+                <DropdownMenuItem
+                  key={option.value}
+                  onClick={() => setAccountTypeFilter(option.value)}
+                >
+                  {option.label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -401,17 +428,6 @@ const BalanceRequestTable = () => {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-
-          <DateRangePicker
-            dateRange={dateRange}
-            onDateRangeChange={setDateRange}
-            className="w-full sm:w-auto"
-          />
-
-          <ExportToCSV data={filteredData} filename="balance-requests">
-            <Download className="h-4 w-4 mr-2" />
-            Export
-          </ExportToCSV>
         </div>
       </div>
 
@@ -456,7 +472,7 @@ const BalanceRequestTable = () => {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No balance requests found matching your criteria.
+                  No users found matching your criteria.
                 </TableCell>
               </TableRow>
             )}
@@ -467,7 +483,7 @@ const BalanceRequestTable = () => {
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="text-sm text-muted-foreground">
           Showing {table.getRowModel().rows.length} of {filteredData.length}{" "}
-          request(s)
+          user(s)
         </div>
 
         <div className="flex items-center space-x-2">
@@ -497,4 +513,4 @@ const BalanceRequestTable = () => {
   );
 };
 
-export default BalanceRequestTable;
+export default UsersTable;

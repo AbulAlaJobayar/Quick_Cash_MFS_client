@@ -1,7 +1,7 @@
 import { User_Role } from "@/constant/role";
 import { DrawerItem } from "./../types/index";
 import { userRole } from "@/types";
-import { LayoutDashboardIcon, BadgePlus, CreditCard, Send, Repeat, User, ClipboardList, BadgeCheck } from "lucide-react";
+import { LayoutDashboardIcon, BadgePlus, CreditCard, Send, Repeat, User, ClipboardList, BadgeCheck, Users, User2 } from "lucide-react";
 
 export const drawerItem = (role: userRole): DrawerItem[] => {
   const roleMenus: DrawerItem[] = [];
@@ -39,6 +39,16 @@ export const drawerItem = (role: userRole): DrawerItem[] => {
           title: "Balance Requests",
           path: "/dashboard/approvedRequests",
           icon: BadgeCheck
+        },
+        {
+          title: "All Agent",
+          path: "/dashboard/agents",
+          icon:  Users
+        },
+        {
+          title: "All User",
+          path: "/dashboard/users",
+          icon:  User2
         }
      );
       break;

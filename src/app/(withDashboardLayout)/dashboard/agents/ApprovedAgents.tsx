@@ -33,9 +33,6 @@ import { Input } from "@/components/ui/input";
 import {
   Clock,
   CheckCircle2,
-  XCircle,
-  User,
-  Shield,
   Wallet,
   MoreVertical,
   ChevronDown,
@@ -43,63 +40,54 @@ import {
   Search,
   Filter,
   Download,
+  Users,
+  Store,
+  MapPin,
+  Calendar,
+  FileText,
+  XCircle,
 } from "lucide-react";
-import {
-  useApprovedRequestMutation,
-  useTotalRequestQuery,
-} from "@/redux/api/balanceRequest";
 import LoadingCard from "@/components/shared/LoadingCard";
 import { format } from "date-fns";
 import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "@/components/ApprovedRequest/DateRangePicker";
 import { ExportToCSV } from "@/components/ApprovedRequest/ExportToCSV";
 import { toast } from "sonner";
+import { useAllAgentQuery, useApprovedAgentMutation } from "@/redux/api/agentApi";
 
 interface Agent {
   _id: string;
-  name: string;
-  mobileNumber: string;
-  accountType: "user" | "agent" | "admin";
-  status: "blocked" | "approved";
-}
-
-interface Admin {
-  _id: string;
-  name: string;
-}
-
-interface BalanceRequest {
-  _id: string;
-  agentId: Agent;
-  amount: number;
-  status: "pending" | "approved" | "rejected";
-  transactionId: string;
-  createdAt: string;
-  processedAt?: string;
-  adminId?: Admin;
-  userId?: {
+  userId: {
     _id: string;
     name: string;
-    storeName: string;
-    storeLocation: string;
+    mobileNumber: string;
+    accountType: "user" | "agent" | "admin";
+    email: string;
+    nid: string;
+    balance: number;
   };
+  storeName: string;
+  storeLocation: string;
+  status: "in-progress" | "approved" | "rejected";
+  createdAt: string;
+  updatedAt: string;
 }
 
 const statusOptions = [
-  { value: "pending", label: "Pending" },
+  { value: "in-progress", label: "In Progress" },
   { value: "approved", label: "Approved" },
   { value: "rejected", label: "Rejected" },
 ];
 
-const BalanceRequestTable = () => {
+const ApprovedAgentsPage = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  const { data, isLoading, isError, refetch } = useTotalRequestQuery("");
-  const [updateRequestStatus] = useApprovedRequestMutation();
-
+  const { data, isLoading, isError, refetch } = useAllAgentQuery("");
+  const [updateRequestStatus] = useApprovedAgentMutation();
+ console.log({data})
   const handleStatusUpdate = async (
     id: string,
     status: "approved" | "rejected"
@@ -107,11 +95,12 @@ const BalanceRequestTable = () => {
     try {
       const res = await updateRequestStatus({ id, status }).unwrap();
       if (res?.success) {
-        toast.success(
-          res?.data?.message || "balance requested updated successfully"
-        );
+        toast.success(res?.data?.message || `Agent ${status} successfully`);
+        refetch();
+      }else{
+        toast.error(res?.message || "Failed to update agent status");
       }
-    } catch (error:any) {
+    } catch (error: any) {
       toast.error(error.message);
     }
   };
@@ -119,47 +108,35 @@ const BalanceRequestTable = () => {
   const filteredData = useMemo(() => {
     if (!data?.data) return [];
 
-    return data.data.filter((request: any) => {
+    return data.data.filter((agent: Agent) => {
       // Date filter
-      const requestDate = new Date(request.createdAt);
+      const agentDate = new Date(agent.createdAt);
       const dateFilterPassed =
         !dateRange ||
-        ((!dateRange.from || requestDate >= dateRange.from) &&
-          (!dateRange.to || requestDate <= dateRange.to));
+        ((!dateRange.from || agentDate >= dateRange.from) &&
+          (!dateRange.to || agentDate <= dateRange.to));
 
       // Status filter
       const statusFilterPassed =
-        statusFilter === "all" || request.status === statusFilter;
+        statusFilter === "all" || agent.status === statusFilter;
 
       return dateFilterPassed && statusFilterPassed;
     });
   }, [data?.data, dateRange, statusFilter]);
 
-  const columns: ColumnDef<BalanceRequest>[] = [
+  const columns: ColumnDef<Agent>[] = [
     {
-      accessorKey: "requestFrom",
-      header: "Request From",
+      accessorKey: "userId.name",
+      header: "Agent Information",
       cell: ({ row }) => {
-        const request = row.original;
-        const isAgent = request.agentId?.accountType === "agent";
-        const requesterName = isAgent
-          ? request.agentId?.name
-          : request.userId?.name;
-        const contactInfo = isAgent
-          ? request.agentId?.mobileNumber
-          : `${request.userId?.storeName} (${request.userId?.storeLocation})`;
-
+        const agent = row.original;
         return (
           <div className="flex items-center min-w-[200px]">
-            {isAgent ? (
-              <Shield className="h-4 w-4 mr-2 text-blue-500" />
-            ) : (
-              <User className="h-4 w-4 mr-2 text-green-500" />
-            )}
+            <Users className="h-4 w-4 mr-2 text-blue-500" />
             <div className="overflow-hidden">
-              <p className="font-medium truncate">{requesterName}</p>
+              <p className="font-medium truncate">{agent.userId.name}</p>
               <p className="text-sm text-muted-foreground truncate">
-                {isAgent ? "Agent" : "User"} • {contactInfo}
+                {agent.userId.mobileNumber}
               </p>
             </div>
           </div>
@@ -167,14 +144,34 @@ const BalanceRequestTable = () => {
       },
     },
     {
-      accessorKey: "amount",
+      accessorKey: "storeInfo",
+      header: "Store Details",
+      cell: ({ row }) => {
+        const agent = row.original;
+        return (
+          <div className="flex items-center min-w-[200px]">
+            <Store className="h-4 w-4 mr-2 text-green-500" />
+            <div className="overflow-hidden">
+              <p className="font-medium truncate">{agent.storeName}</p>
+              <p className="text-sm text-muted-foreground truncate">
+                <MapPin className="inline h-3 w-3 mr-1" />
+                {agent.storeLocation}
+              </p>
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "userId.balance",
       header: ({ column }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="px-0"
         >
-          Amount
+          <Wallet className="h-4 w-4 mr-2 text-purple-500" />
+          Balance
           {column.getIsSorted() === "asc" ? (
             <ChevronUp className="ml-2 h-4 w-4" />
           ) : column.getIsSorted() === "desc" ? (
@@ -185,17 +182,14 @@ const BalanceRequestTable = () => {
         </Button>
       ),
       cell: ({ row }) => (
-        <div className="flex items-center">
-          <Wallet className="h-4 w-4 mr-2 text-purple-500" />
-          <span className="font-medium">
-            {row.original.amount.toLocaleString("en-US", {
-              style: "currency",
-              currency: "USD",
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
-          </span>
-        </div>
+        <span className="font-medium">
+          {row.original.userId.balance.toLocaleString("en-US", {
+            style: "currency",
+            currency: "USD",
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </span>
       ),
     },
     {
@@ -204,24 +198,21 @@ const BalanceRequestTable = () => {
       cell: ({ row }) => {
         const status = row.original.status;
         const iconMap = {
-          pending: <Clock className="h-4 w-4 mr-1" />,
+          "in-progress": <Clock className="h-4 w-4 mr-1 text-yellow-500" />,
           approved: <CheckCircle2 className="h-4 w-4 mr-1 text-green-500" />,
           rejected: <XCircle className="h-4 w-4 mr-1 text-red-500" />,
         };
 
-        const variantMap: Record<
-          "pending" | "approved" | "rejected",
-          "secondary" | "default" | "destructive"
-        > = {
-          pending: "secondary",
+        const variantMap = {
+          "in-progress": "secondary",
           approved: "default",
           rejected: "destructive",
-        };
+        } as const;
 
         return (
           <Badge variant={variantMap[status]} className="flex items-center">
             {iconMap[status]}
-            {status.charAt(0).toUpperCase() + status.slice(1)}
+            {status === "in-progress" ? "In Progress" : status.charAt(0).toUpperCase() + status.slice(1)}
           </Badge>
         );
       },
@@ -230,55 +221,32 @@ const BalanceRequestTable = () => {
       },
     },
     {
-      accessorKey: "transactionId",
-      header: "Transaction ID",
+      accessorKey: "createdAt",
+      header: "Registration Date",
       cell: ({ row }) => (
-        <div className="font-mono text-sm text-ellipsis overflow-hidden">
-          {row.original.transactionId || "N/A"}
+        <div className="flex items-center text-sm">
+          <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
+          {format(new Date(row.original.createdAt), "MMM dd, yyyy")}
         </div>
       ),
     },
     {
-      accessorKey: "adminId.name",
-      header: "Processed By",
+      accessorKey: "userId.nid",
+      header: "NID",
       cell: ({ row }) => (
-        <div className="text-ellipsis overflow-hidden">
-          {row.original.adminId?.name || "Pending"}
+        <div className="flex items-center text-sm">
+          <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
+          {row.original.userId.nid}
         </div>
       ),
-    },
-    {
-      accessorKey: "dates",
-      header: "Timeline",
-      cell: ({ row }) => {
-        const request = row.original;
-        return (
-          <div className="text-sm space-y-1 min-w-[180px]">
-            <div className="flex items-center">
-              <span className="text-muted-foreground mr-2">Request:</span>
-              <span>
-                {format(new Date(request.createdAt), "MMM dd, yyyy HH:mm")}
-              </span>
-            </div>
-            {request.processedAt && (
-              <div className="flex items-center">
-                <span className="text-muted-foreground mr-2">Processed:</span>
-                <span>
-                  {format(new Date(request.processedAt), "MMM dd, yyyy HH:mm")}
-                </span>
-              </div>
-            )}
-          </div>
-        );
-      },
     },
     {
       id: "actions",
       header: "",
       cell: ({ row }) => {
-        const request = row.original;
+        const agent = row.original;
 
-        if (request.status !== "pending") {
+        if (agent.status !== "in-progress") {
           return null;
         }
 
@@ -293,16 +261,15 @@ const BalanceRequestTable = () => {
             <DropdownMenuContent align="end" className="w-40">
               <DropdownMenuItem
                 className="text-green-600 focus:text-green-600 focus:bg-green-50"
-                onClick={() => handleStatusUpdate(request._id, "approved")}
+                onClick={() => handleStatusUpdate(agent._id, "approved")}
               >
                 <CheckCircle2 className="mr-2 h-4 w-4" />
                 Approve
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-red-600 focus:text-red-600 focus:bg-red-50"
-                onClick={() => handleStatusUpdate(request._id, "rejected")}
-          
-            >
+                onClick={() => handleStatusUpdate(agent._id, "rejected")}
+              >
                 <XCircle className="mr-2 h-4 w-4" />
                 Reject
               </DropdownMenuItem>
@@ -337,15 +304,11 @@ const BalanceRequestTable = () => {
       <div className="container mx-auto py-8">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <h2 className="text-xl font-semibold mb-2">Error loading data</h2>
+            <h2 className="text-xl font-semibold mb-2">Error loading agents</h2>
             <p className="text-muted-foreground">
-              Failed to fetch balance requests. Please try again later.
+              Failed to fetch agent data. Please try again later.
             </p>
-            <Button
-              variant="outline"
-              className="mt-4"
-              onClick={() => refetch()}
-            >
+            <Button variant="outline" className="mt-4" onClick={() => refetch()}>
               Retry
             </Button>
           </div>
@@ -357,21 +320,20 @@ const BalanceRequestTable = () => {
   return (
     <div className="container mx-auto py-8 space-y-4">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <h1 className="text-2xl font-bold">Balance Requests</h1>
+        <h1 className="text-2xl font-bold">Agent Management</h1>
 
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search requests..."
+              placeholder="Search agents..."
               className="pl-9 w-full sm:w-[200px] lg:w-[300px]"
               value={
-                (table.getColumn("requestFrom")?.getFilterValue() as string) ??
-                ""
+                (table.getColumn("userId.name")?.getFilterValue() as string) ?? ""
               }
               onChange={(event) =>
                 table
-                  .getColumn("requestFrom")
+                  .getColumn("userId.name")
                   ?.setFilterValue(event.target.value)
               }
             />
@@ -408,7 +370,10 @@ const BalanceRequestTable = () => {
             className="w-full sm:w-auto"
           />
 
-          <ExportToCSV data={filteredData} filename="balance-requests">
+          <ExportToCSV
+            data={filteredData}
+            filename="agents"
+          >
             <Download className="h-4 w-4 mr-2" />
             Export
           </ExportToCSV>
@@ -456,7 +421,7 @@ const BalanceRequestTable = () => {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No balance requests found matching your criteria.
+                  No agents found matching your criteria.
                 </TableCell>
               </TableRow>
             )}
@@ -467,7 +432,7 @@ const BalanceRequestTable = () => {
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="text-sm text-muted-foreground">
           Showing {table.getRowModel().rows.length} of {filteredData.length}{" "}
-          request(s)
+          agent(s)
         </div>
 
         <div className="flex items-center space-x-2">
@@ -497,4 +462,4 @@ const BalanceRequestTable = () => {
   );
 };
 
-export default BalanceRequestTable;
+export default ApprovedAgentsPage;
