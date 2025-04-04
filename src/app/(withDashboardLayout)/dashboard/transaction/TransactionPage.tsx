@@ -21,6 +21,7 @@ import { useMyTransactionQuery } from "@/redux/api/transactionApi";
 // import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import { useEffect, useState } from "react";
 import LoadingCard from "@/components/shared/LoadingCard";
+import { useRouter } from "next/navigation";
 
 interface Transaction {
   admin: Admin;
@@ -58,11 +59,14 @@ interface Sender {
 const TransactionPage = () => {
   const [isClient, setIsClient] = useState(false);
   const { data, isLoading } = useMyTransactionQuery("");
+  const router = useRouter();
 
   useEffect(() => {
     setIsClient(true);
   }, []);
-
+  const handleRowClick = (transactionId: string) => {
+    router.push(`transaction/${transactionId}`);
+  };
   // Define columns
   const columns: ColumnDef<Transaction>[] = [
     {
@@ -180,6 +184,8 @@ const TransactionPage = () => {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  onClick={() => handleRowClick(row.original._id)}
+                  className="cursor-pointer hover:bg-gray-50"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

@@ -16,6 +16,13 @@ const transactionApi = baseApi.injectEndpoints({
       }),
       providesTags: [tagType.transaction],
     }),
+    singleTransaction: build.query({
+      query: ({id}) => ({
+        url: `/transaction/single/${id}`,
+        method: "GET",
+      }),
+      providesTags: [tagType.transaction],
+    }),
     monthlyTransaction: build.query({
       query: () => ({
         url: "/transaction/monthly",
@@ -55,5 +62,6 @@ export const {
   useMonthlyTransactionQuery,
   useCashOutMutation,
   useSendMoneyMutation,
-  useCashInMutation
+  useCashInMutation,
+  useSingleTransactionQuery
 } = transactionApi;
