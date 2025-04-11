@@ -101,7 +101,7 @@ const Dashboard = () => {
     refetchMonthly();
   };
 
-  if (userLoading || transactionLoading || monthlyLoading || myTransactionLoading) {
+  if (userLoading && transactionLoading && monthlyLoading && myTransactionLoading) {
     return <LoadingSkeleton />;
   }
 

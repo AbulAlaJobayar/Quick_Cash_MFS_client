@@ -60,13 +60,51 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        IconLeft: ({ className, ...props }) => (
-          <ChevronLeft className={cn("size-4", className)} {...props} />
-        ),
-        IconRight: ({ className, ...props }) => (
-          <ChevronRight className={cn("size-4", className)} {...props} />
-        ),
+        Nav: ({ 
+          previousMonth,
+          nextMonth,
+          onPreviousClick,
+          onNextClick,
+          ...props
+        }) => (
+          <div className="flex items-center gap-1" {...props}>
+            <button
+              onClick={(e) => {
+                onPreviousClick?.(e);
+                e.currentTarget.blur();
+              }}
+              disabled={!previousMonth}
+              className={cn(
+                buttonVariants({ variant: "outline" }),
+                "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute left-1"
+              )}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              onClick={(e) => {
+                onNextClick?.(e);
+                e.currentTarget.blur();
+              }}
+              disabled={!nextMonth}
+              className={cn(
+                buttonVariants({ variant: "outline" }),
+                "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute right-1"
+              )}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        )
       }}
+      // components={{
+      //   IconLeft: ({ className, ...props }) => (
+      //     <ChevronLeft className={cn("size-4", className)} {...props} />
+      //   ),
+      //   IconRight: ({ className, ...props }) => (
+      //     <ChevronRight className={cn("size-4", className)} {...props} />
+      //   ),
+      // }}
       {...props}
     />
   )

@@ -53,7 +53,6 @@ export default function Navbar() {
 
   const navLinks = [
     { href: "/", label: "Home" },
-    { href: "/services", label: "Services" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
   ];
@@ -225,7 +224,7 @@ export default function Navbar() {
               {/* Authentication Links */}
               {userLoggedIn ? (
                 <>
-                  {" "}
+                
                   <motion.div
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.8 }}

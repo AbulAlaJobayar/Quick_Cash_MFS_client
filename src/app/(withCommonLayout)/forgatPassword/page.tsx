@@ -14,26 +14,17 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import parsePhoneNumberFromString from "libphonenumber-js";
+
 import { Key } from "lucide-react";
 import QKSFrom from "@/components/shared/Form/QKSForm";
 import QKSInput from "@/components/shared/Form/QKSInput";
 import { toast } from "sonner";
+import forgatPassword from "@/service/action/forgatPassword";
 
 // Validation schema
-const mobileNumber = z.string().refine(
-  (value) => {
-    const mobile = parsePhoneNumberFromString(value);
-    return mobile?.isValid() || false;
-  },
-  {
-    message:
-      "Invalid phone number. Please enter a valid phone number with country code.",
-  }
-);
 
 const formSchema = z.object({
-  mobileNumber: mobileNumber,
+  email: z.string().min(1, "Email is required").email("Invalid email"),
 });
 
 export default function ForgotPasswordPage() {
@@ -43,20 +34,26 @@ export default function ForgotPasswordPage() {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsLoading(true);
 
+    console.log(data, "forgat password data");
     try {
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      toast.success("OTP Sent", {
-        description: "We've sent a 6-digit OTP to your Email",
+      const res = await forgatPassword(data);
+     console.log(res)
+      if (res?.success) {
+        toast.success("send Email", {
+          description: res?.message,
+        });
+      } else {
+        toast.error("Error", {
+          description: res?.message,
+        });
+      }
+    } catch (error: any) {
+      toast.error("Error", {
+        description:
+          error?.message || "Failed to send email. Please try again.",
       });
-
-      // router.push(`/verify-otp?mobile=${data.mobileNumber}`);
-    } catch (error:any) {
-      toast.success("Error", {
-        description: "Failed to send OTP. Please try again.",
-      });
-      console.log(error)
-      
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -78,7 +75,7 @@ export default function ForgotPasswordPage() {
                   Reset Password
                 </CardTitle>
                 <p className="text-blue-100 mt-1">
-                  Enter your mobile number to receive OTP
+                  Enter your Email to receive a password reset link
                 </p>
               </div>
               <Key className="h-8 w-8 opacity-90" />
@@ -88,14 +85,14 @@ export default function ForgotPasswordPage() {
           <CardContent className="p-6">
             <QKSFrom
               onSubmit={onSubmit}
-              defaultValues={{ mobileNumber: "" }}
+              defaultValues={{ email: "" }}
               resolver={zodResolver(formSchema)}
             >
               <QKSInput
-                type="text"
-                name="mobileNumber"
-                label="Mobile Number"
-                placeholder="+8801XXXXXXXXX"
+                type="email"
+                name="email"
+                label="Email"
+                placeholder="Enter your email address"
                 required
               />
               <Button
@@ -106,10 +103,10 @@ export default function ForgotPasswordPage() {
                 {isLoading ? (
                   <>
                     <p className="mr-2 h-4 w-4 animate-spin" />
-                    Sending OTP...
+                    Sending email...
                   </>
                 ) : (
-                  "Send OTP"
+                  "Send Email"
                 )}
               </Button>
             </QKSFrom>
