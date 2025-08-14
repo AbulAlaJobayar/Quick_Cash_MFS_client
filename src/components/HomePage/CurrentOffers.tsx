@@ -7,40 +7,37 @@ import {
   CarouselPrevious,
 } from "../ui/carousel";
 import Image from "next/image";
-import image1 from "@/assets/mfs1.jpg";
-import image2 from "@/assets/mfs2.jpg";
-import image3 from "@/assets/mfs3.jpg";
-import image4 from "@/assets/mfs4.jpg";
-import image5 from "@/assets/mfs5.jpg";
 import { Button } from "../ui/button";
+import { OFFERS_DATA } from "@/data/offer";
+import Link from "next/link";
 
-const offers = [
-  {
-    id: 1,
-    name: "offer1",
-    img: image1,
-  },
-  {
-    id: 2,
-    name: "offer2",
-    img: image2,
-  },
-  {
-    id: 3,
-    name: "offer3",
-    img: image3,
-  },
-  {
-    id: 4,
-    name: "offer4",
-    img: image4,
-  },
-  {
-    id: 5,
-    name: "offer5",
-    img: image5,
-  },
-];
+// const offers = [
+//   {
+//     id: 1,
+//     name: "offer1",
+//     img: image1,
+//   },
+//   {
+//     id: 2,
+//     name: "offer2",
+//     img: image2,
+//   },
+//   {
+//     id: 3,
+//     name: "offer3",
+//     img: image3,
+//   },
+//   {
+//     id: 4,
+//     name: "offer4",
+//     img: image4,
+//   },
+//   {
+//     id: 5,
+//     name: "offer5",
+//     img: image5,
+//   },
+// ];
 
 const CurrentOffers = () => {
   return (
@@ -60,7 +57,7 @@ const CurrentOffers = () => {
         >
           {/* Carousel Content */}
           <CarouselContent>
-            {offers.map((offer, index) => (
+            {OFFERS_DATA.map((offer, index) => (
               <CarouselItem
                 key={index}
                 className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/3"
@@ -69,16 +66,14 @@ const CurrentOffers = () => {
                   {" "}
                   {/* Adjust height as needed */}
                   <Image
-                    alt={offer.name}
+                    alt={offer.title}
                     src={offer.img}
                     sizes="100%"
                     className="rounded-lg w-full"
                   />
-                  
-                    <Button className="absolute cursor-pointer bg-pink-800 hover:bg-pink-900 bottom-4 left-1/2 transform -translate-x-1/2 w-3/4 text-center mx-auto px-10">
-                      Details
-                    </Button>
-                 
+                  <Button className="absolute cursor-pointer bg-pink-800 hover:bg-pink-900 bottom-4 left-1/2 transform -translate-x-1/2 w-3/4 text-center mx-auto px-10">
+                    <Link href={`/offers/${offer.id}`}>Details </Link>
+                  </Button>
                 </div>
               </CarouselItem>
             ))}

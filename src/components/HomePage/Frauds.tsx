@@ -26,14 +26,15 @@ const Frauds = () => {
               Beware of Frauds
             </h1>
             <p className="text-lg text-gray-600 leading-relaxed dark:text-white">
-              Do not share the PIN, OTP, or account balance of your QKash account
-              with anyone. Fraudsters can take advantage of your vulnerability to
-              steal your hard-earned money from your account. Even by using your
-              account, they can scam others by pretending to be you.
+              Do not share the PIN, OTP, or account balance of your QKash
+              account with anyone. Fraudsters can take advantage of your
+              vulnerability to steal your hard-earned money from your account.
+              Even by using your account, they can scam others by pretending to
+              be you.
             </p>
             <Link href={"#"}>
               <Button className="bg-gradient-to-tr from-pink-600 to-pink-800 hover:from-pink-700 hover:to-pink-900 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
-                Learn More
+                <Link href="/fraud"> Learn More</Link>
               </Button>
             </Link>
           </div>
